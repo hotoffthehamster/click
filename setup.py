@@ -7,17 +7,17 @@ from setuptools import setup
 with io.open("README.rst", "rt", encoding="utf8") as f:
     readme = f.read()
 
-with io.open("src/click/__init__.py", "rt", encoding="utf8") as f:
+with io.open("src/click_hotoffthehamster/__init__.py", "rt", encoding="utf8") as f:
     version = re.search(r'__version__ = "(.*?)"', f.read()).group(1)
 
 setup(
-    name="click",
+    name="click-hotoffthehamster",
     version=version,
-    url="https://palletsprojects.com/p/click/",
+    url="https://github.com/hotoffthehamster/click",
     project_urls={
-        "Documentation": "https://click.palletsprojects.com/",
-        "Code": "https://github.com/pallets/click",
-        "Issue tracker": "https://github.com/pallets/click/issues",
+        # "Documentation": "https://click.palletsprojects.com/",
+        "Code": "https://github.com/hotoffthehamster/click",
+        "Issue tracker": "https://github.com/hotoffthehamster/click/issues",
     },
     license="BSD-3-Clause",
     maintainer="Pallets",
