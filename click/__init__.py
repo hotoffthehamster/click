@@ -95,4 +95,5 @@ __all__ = [
 disable_unicode_literals_warning = False
 
 
-__version__ = '7.0-dev'
+__version__ = '7.0.0.a2'
+
