@@ -15,7 +15,7 @@ with io.open('click/__init__.py', 'rt', encoding='utf8') as f:
     version = re.search(r'__version__ = \'(.*?)\'', f.read()).group(1)
 
 setup(
-    name='click',
+    name='click--hotoffthehamster',
     version=version,
     url='https://www.palletsprojects.com/p/click/',
     author='Armin Ronacher',
