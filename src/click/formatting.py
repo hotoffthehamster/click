@@ -187,7 +187,7 @@ class HelpFormatter(object):
         )
         self.write("\n")
 
-    def write_dl(self, rows, col_max=30, col_spacing=2):
+    def write_dl(self, rows, col_max=30, col_spacing=2, col_min=1):
         """Writes a definition list into the buffer.  This is how options
         and commands are usually formatted.
 
@@ -195,13 +195,14 @@ class HelpFormatter(object):
         :param col_max: the maximum width of the first column.
         :param col_spacing: the number of spaces between the first and
                             second column.
+        :param col_min: the minimum width of the first column.
         """
         rows = list(rows)
         widths = measure_table(rows)
         if len(widths) != 2:
             raise TypeError("Expected two columns for definition list")
 
-        first_col = min(widths[0], col_max) + col_spacing
+        first_col = max(min(widths[0], col_max), col_min) + col_spacing
 
         for first, second in iter_rows(rows, len(widths)):
             self.write("{:>{w}}{}".format("", first, w=self.current_indent))
