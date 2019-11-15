@@ -1110,7 +1110,7 @@ class Command(BaseCommand):
             with formatter.indentation():
                 formatter.write_text(DEPRECATED_HELP_NOTICE)
 
-    def format_options(self, ctx, formatter):
+    def format_options(self, ctx, formatter, **kwargs):
         """Writes all the options into the formatter if they exist."""
         opts = []
         for param in self.get_params(ctx):
@@ -1120,7 +1120,7 @@ class Command(BaseCommand):
 
         if opts:
             with formatter.section(self.help_header_options):
-                formatter.write_dl(opts)
+                formatter.write_dl(opts, **kwargs)
 
     def format_epilog(self, ctx, formatter):
         """Writes the epilog into the formatter if it exists."""
@@ -1289,7 +1289,7 @@ class MultiCommand(Command):
             commands.append((subcommand, cmd))
         return commands
 
-    def format_commands_write(self, commands, formatter, section_header=None):
+    def format_commands_write(self, commands, formatter, section_header=None, **kwargs):
         if section_header is None:
             section_header = self.help_header_commands
 
@@ -1304,7 +1304,7 @@ class MultiCommand(Command):
 
             if rows:
                 with formatter.section(section_header):
-                    formatter.write_dl(rows)
+                    formatter.write_dl(rows, **kwargs)
 
     def parse_args(self, ctx, args):
         if not args and self.no_args_is_help and not ctx.resilient_parsing:
