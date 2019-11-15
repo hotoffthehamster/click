@@ -272,6 +272,10 @@ class Context(object):
     :param show_default: if True, shows defaults for all options.
                     Even if an option is later created with show_default=False,
                     this command-level setting overrides it.
+    :param help_option_fallthrough: if True, do not process --help on root
+                                    command before calling invoke (so that
+                                    other options, like --color, can be used
+                                    in concert with --help).
     """
 
     def __init__(
@@ -292,6 +296,7 @@ class Context(object):
         token_normalize_func=None,
         color=None,
         show_default=None,
+        help_option_fallthrough=False,
     ):
         #: the parent context or `None` if none exists.
         self.parent = parent
@@ -421,6 +426,9 @@ class Context(object):
         self.color = color
 
         self.show_default = show_default
+
+        self.help_option_fallthrough = help_option_fallthrough
+        self.help_option_spotted = False
 
         self._close_callbacks = []
         self._depth = 0
@@ -1014,6 +1022,9 @@ class Command(BaseCommand):
 
         def show_help(ctx, param, value):
             if value and not ctx.resilient_parsing:
+                if ctx.find_root().help_option_fallthrough:
+                    ctx.find_root().help_option_spotted = True
+                    return
                 echo(ctx.get_help(), color=ctx.color)
                 ctx.exit()
 
