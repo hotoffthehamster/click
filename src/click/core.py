@@ -1081,6 +1081,18 @@ class Command(BaseCommand):
         self.format_options(ctx, formatter)
         self.format_epilog(ctx, formatter)
 
+    @property
+    def help_header_options(self):
+        return "Options"
+
+    @property
+    def help_header_commands(self):
+        return "Commands"
+
+    @property
+    def help_header_epilog(self):
+        return ""
+
     def format_help_text(self, ctx, formatter):
         """Writes the help text to the formatter if it exists."""
         if self.help:
@@ -1107,14 +1119,14 @@ class Command(BaseCommand):
                 opts.append(rv)
 
         if opts:
-            with formatter.section("Options"):
+            with formatter.section(self.help_header_options):
                 formatter.write_dl(opts)
 
     def format_epilog(self, ctx, formatter):
         """Writes the epilog into the formatter if it exists."""
         if self.epilog:
             formatter.write_paragraph()
-            with formatter.indentation():
+            with formatter.section(self.help_header_epilog):
                 formatter.write_text(self.epilog)
 
     def parse_args(self, ctx, args):
@@ -1277,7 +1289,9 @@ class MultiCommand(Command):
             commands.append((subcommand, cmd))
         return commands
 
-    def format_commands_write(self, commands, formatter):
+    def format_commands_write(self, commands, formatter, section_header=None):
+        if section_header is None:
+            section_header = self.help_header_commands
 
         # allow for 3 times the default spacing
         if len(commands):
@@ -1289,7 +1303,7 @@ class MultiCommand(Command):
                 rows.append((subcommand, help))
 
             if rows:
-                with formatter.section("Commands"):
+                with formatter.section(section_header):
                     formatter.write_dl(rows)
 
     def parse_args(self, ctx, args):
