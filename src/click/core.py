@@ -951,7 +951,7 @@ class Command(BaseCommand):
         self.params = params or []
         # if a form feed (page break) is found in the help text, truncate help
         # text to the content preceding the first form feed
-        if help and "\f" in help:
+        if help and not callable(help) and "\f" in help:
             help = help.split("\f", 1)[0]
         self.help = help
         self.epilog = epilog
@@ -1076,6 +1076,9 @@ class Command(BaseCommand):
             formatter.write_paragraph()
             with formatter.indentation():
                 help_text = self.help
+                if callable(help_text):
+                    help_text = help_text()
+                    help_text = inspect.cleandoc(help_text)
                 if self.deprecated:
                     help_text += DEPRECATED_HELP_NOTICE
                 formatter.write_text(help_text)

@@ -91,7 +91,7 @@ def _make_command(f, name, attrs, cls):
         help = inspect.getdoc(f)
         if isinstance(help, bytes):
             help = help.decode("utf-8")
-    else:
+    elif not callable(help):
         help = inspect.cleandoc(help)
     attrs["help"] = help
     _check_for_unicode_literals()
