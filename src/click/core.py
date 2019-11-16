@@ -1034,6 +1034,7 @@ class Command(BaseCommand):
             is_eager=True,
             expose_value=False,
             callback=show_help,
+            hidden=ctx.parent is not None,
             help="Show this message and exit.",
         )
 

@@ -61,6 +61,9 @@ def test_auto_shorthelp(runner):
     result = runner.invoke(cli, ["--help"])
     assert (
         re.search(
+            r"Usage: cli \[OPTIONS\] COMMAND \[ARGS\]\.\.\.\n\n\s*"
+            r"Options:\n\s+"
+            r"--help\s+Show this message and exit\.\n\n\s*"
             r"Commands:\n\s+"
             r"long\s+This is a long text that is too long to show as short help"
             r"\.\.\.\n\s+"

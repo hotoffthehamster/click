@@ -82,9 +82,6 @@ def test_wrapping_long_options_strings(runner):
         "                               SIXTH",
         "",
         "  A command.",
-        "",
-        "Options:",
-        "  --help  Show this message and exit.",
     ]
 
 
@@ -120,9 +117,6 @@ def test_wrapping_long_command_name(runner):
         "           SIXTH",
         "",
         "  A command.",
-        "",
-        "Options:",
-        "  --help  Show this message and exit.",
     ]
 
 
