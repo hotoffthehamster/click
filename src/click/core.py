@@ -1001,7 +1001,7 @@ class Command(BaseCommand):
         """Returns all the pieces that go into the usage line and returns
         it as a list of strings.
         """
-        rv = [self.options_metavar]
+        rv = self.options_metavar and [self.options_metavar] or []
         for param in self.get_params(ctx):
             rv.extend(param.get_usage_pieces(ctx))
         return rv
@@ -1222,7 +1222,8 @@ class MultiCommand(Command):
 
     def collect_usage_pieces(self, ctx):
         rv = Command.collect_usage_pieces(self, ctx)
-        rv.append(self.subcommand_metavar)
+        if self.subcommand_metavar:
+            rv.append(self.subcommand_metavar)
         return rv
 
     def format_options(self, ctx, formatter):
