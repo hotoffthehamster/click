@@ -1053,16 +1053,16 @@ class Command(BaseCommand):
         self.format_help(ctx, formatter)
         return formatter.getvalue().rstrip("\n")
 
-    def get_short_help_str(self, limit=45):
+    def get_short_help_str(self, ctx, limit=45):
         """Gets short help for the command or makes it by shortening the
         long help string.
         """
-        return (
-            self.short_help
-            or self.help
-            and make_default_short_help(self.help, limit)
-            or ""
-        )
+        if self.short_help:
+            return self.short_help
+        help = self.help
+        if callable(help):
+            help = help(ctx)
+        return help and make_default_short_help(help, limit) or ""
 
     def format_help(self, ctx, formatter):
         """Writes the help into the formatter if it exists.
@@ -1100,7 +1100,7 @@ class Command(BaseCommand):
             with formatter.indentation():
                 help_text = self.help
                 if callable(help_text):
-                    help_text = help_text()
+                    help_text = help_text(ctx)
                     help_text = inspect.cleandoc(help_text)
                 if self.deprecated:
                     help_text += DEPRECATED_HELP_NOTICE
@@ -1274,7 +1274,7 @@ class MultiCommand(Command):
         after the options.
         """
         commands = self.format_commands_fetch(ctx)
-        self.format_commands_write(commands, formatter)
+        self.format_commands_write(commands, ctx, formatter)
 
     def format_commands_fetch(self, ctx):
         commands = []
@@ -1289,7 +1289,9 @@ class MultiCommand(Command):
             commands.append((subcommand, cmd))
         return commands
 
-    def format_commands_write(self, commands, formatter, section_header=None, **kwargs):
+    def format_commands_write(
+        self, commands, ctx, formatter, section_header=None, **kwargs
+    ):
         if section_header is None:
             section_header = self.help_header_commands
 
@@ -1299,7 +1301,7 @@ class MultiCommand(Command):
 
             rows = []
             for subcommand, cmd in commands:
-                help = cmd.get_short_help_str(limit)
+                help = cmd.get_short_help_str(ctx=ctx, limit=limit)
                 rows.append((subcommand, help))
 
             if rows:

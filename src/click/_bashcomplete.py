@@ -249,7 +249,7 @@ def add_subcommand_completions(ctx, incomplete, completions_out):
     if isinstance(ctx.command, MultiCommand):
         completions_out.extend(
             [
-                (c.name, c.get_short_help_str())
+                (c.name, c.get_short_help_str(ctx=ctx))
                 for c in get_visible_commands_starting_with(ctx, incomplete)
             ]
         )
@@ -265,7 +265,7 @@ def add_subcommand_completions(ctx, incomplete, completions_out):
                 if c.name not in ctx.protected_args
             ]
             completions_out.extend(
-                [(c.name, c.get_short_help_str()) for c in remaining_commands]
+                [(c.name, c.get_short_help_str(ctx=ctx)) for c in remaining_commands]
             )
 
 
