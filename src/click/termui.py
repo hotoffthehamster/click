@@ -351,7 +351,7 @@ def progressbar(
     together with ``item_show_func`` to customize the output for each
     manual step::
 
-        with click.progressbar(
+        with click_hotoffthehamster.progressbar(
             length=total_size,
             label='Unzipping archive',
             item_show_func=lambda a: a.filename
@@ -462,9 +462,9 @@ def style(
 
     Examples::
 
-        click.echo(click.style('Hello World!', fg='green'))
-        click.echo(click.style('ATTENTION!', blink=True))
-        click.echo(click.style('Some things', reverse=True, fg='cyan'))
+        click_hotoffthehamster.echo(click_hotoffthehamster.style('Hello World!', fg='green'))
+        click_hotoffthehamster.echo(click_hotoffthehamster.style('ATTENTION!', blink=True))
+        click_hotoffthehamster.echo(click_hotoffthehamster.style('Some things', reverse=True, fg='cyan'))
 
     Supported color names:
 
@@ -549,8 +549,8 @@ def secho(message=None, file=None, nl=True, err=False, color=None, **styles):
     """This function combines :func:`echo` and :func:`style` into one
     call.  As such the following two calls are the same::
 
-        click.secho('Hello World!', fg='green')
-        click.echo(click.style('Hello World!', fg='green'))
+        click_hotoffthehamster.secho('Hello World!', fg='green')
+        click_hotoffthehamster.echo(click_hotoffthehamster.style('Hello World!', fg='green'))
 
     All keyword arguments are forwarded to the underlying functions
     depending on which one they go with.
@@ -611,8 +611,8 @@ def launch(url, wait=False, locate=False):
 
     Examples::
 
-        click.launch('https://click.palletsprojects.com/')
-        click.launch('/my/downloaded/file', locate=True)
+        click_hotoffthehamster.launch('https://click.palletsprojects.com/')
+        click_hotoffthehamster.launch('/my/downloaded/file', locate=True)
 
     .. versionadded:: 2.0
 

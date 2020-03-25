@@ -206,8 +206,8 @@ def confirmation_option(*param_decls, **attrs):
             if not value:
                 ctx.abort()
 
-        @click.command()
-        @click.option('--yes', is_flag=True, callback=callback,
+        @click_hotoffthehamster.command()
+        @click_hotoffthehamster.option('--yes', is_flag=True, callback=callback,
                       expose_value=False, prompt='Do you want to continue?')
         def dropdb():
             pass
@@ -234,8 +234,8 @@ def password_option(*param_decls, **attrs):
     This is equivalent to decorating a function with :func:`option` with
     the following parameters::
 
-        @click.command()
-        @click.option('--password', prompt=True, confirmation_prompt=True,
+        @click_hotoffthehamster.command()
+        @click_hotoffthehamster.option('--password', prompt=True, confirmation_prompt=True,
                       hide_input=True)
         def changeadmin(password):
             pass

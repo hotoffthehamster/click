@@ -1242,8 +1242,8 @@ class MultiCommand(Command):
 
         Example::
 
-            @click.group()
-            @click.option('-i', '--input', default=23)
+            @click_hotoffthehamster.group()
+            @click_hotoffthehamster.option('-i', '--input', default=23)
             def cli(input):
                 return 42
 

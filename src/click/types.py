@@ -271,7 +271,7 @@ class IntParamType(ParamType):
 
 
 class IntRange(IntParamType):
-    """A parameter that works similar to :data:`click.INT` but restricts
+    """A parameter that works similar to :data:`click_hotoffthehamster.INT` but restricts
     the value to fit into a range.  The default behavior is to fail if the
     value falls outside the range, but it can also be silently clamped
     between the two edges.
@@ -345,7 +345,7 @@ class FloatParamType(ParamType):
 
 
 class FloatRange(FloatParamType):
-    """A parameter that works similar to :data:`click.FLOAT` but restricts
+    """A parameter that works similar to :data:`click_hotoffthehamster.FLOAT` but restricts
     the value to fit into a range.  The default behavior is to fail if the
     value falls outside the range, but it can also be silently clamped
     between the two edges.

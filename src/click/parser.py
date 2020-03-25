@@ -206,12 +206,12 @@ class OptionParser(object):
     implement features that are implemented on a higher level (such as
     types or defaults).
 
-    :param ctx: optionally the :class:`~click.Context` where this parser
+    :param ctx: optionally the :class:`~click_hotoffthehamster.Context` where this parser
                 should go with.
     """
 
     def __init__(self, ctx=None):
-        #: The :class:`~click.Context` for this parser.  This might be
+        #: The :class:`~click_hotoffthehamster.Context` for this parser.  This might be
         #: `None` for some advanced use cases.
         self.ctx = ctx
         #: This controls how the parser deals with interspersed arguments.
