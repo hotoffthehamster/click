@@ -14,6 +14,7 @@ from ._compat import PY2
 from ._compat import should_strip_ansi
 from ._compat import string_types
 from ._compat import strip_ansi
+from ._compat import term_len
 from ._compat import text_streams
 from ._compat import text_type
 from ._compat import WIN
@@ -65,7 +66,7 @@ def make_default_short_help(help, max_length=45):
     for word in words:
         if word[-1:] == ".":
             done = True
-        new_length = 1 + len(word) if result else len(word)
+        new_length = 1 + term_len(word) if result else term_len(word)
         if total_length + new_length > max_length:
             result.append("...")
             done = True
