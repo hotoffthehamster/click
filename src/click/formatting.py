@@ -135,7 +135,7 @@ class HelpFormatter(object):
         """Decreases the indentation."""
         self.current_indent -= self.indent_increment
 
-    def write_usage(self, prog, args="", prefix="Usage: ", cls=None):
+    def write_usage(self, prog, args="", prefix="Usage: ", cls=None, alt_fmt=False):
         """Writes a usage line into the buffer.
 
         :param prog: the program name.
@@ -145,7 +145,9 @@ class HelpFormatter(object):
         usage_prefix = "{:>{w}}{} ".format(prefix, prog, w=self.current_indent)
         text_width = self.width - self.current_indent
 
-        if text_width >= (term_len(usage_prefix) + 20):
+        # Use alt_fmt if wrapping short line looks awkward when wrapped.
+        threshold = 20 if not alt_fmt else (text_width / 2)
+        if text_width >= (term_len(usage_prefix) + threshold):
             # The arguments will fit to the right of the prefix.
             indent = " " * term_len(usage_prefix)
             self.write(
