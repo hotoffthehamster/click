@@ -23,7 +23,12 @@ def iter_rows(rows, col_count):
 
 
 def wrap_text(
-    text, width=78, initial_indent="", subsequent_indent="", preserve_paragraphs=False
+    text,
+    width=78,
+    initial_indent="",
+    subsequent_indent="",
+    preserve_paragraphs=False,
+    cls=None,
 ):
     """A helper function that intelligently wraps text.  By default, it
     assumes that it operates on a single paragraph of text but if the
@@ -43,10 +48,13 @@ def wrap_text(
     :param preserve_paragraphs: if this flag is set then the wrapping will
                                 intelligently handle paragraphs.
     """
-    from ._textwrap import TextWrapper
+    if cls is None:
+        from ._textwrap import TextWrapper
+
+        cls = TextWrapper
 
     text = text.expandtabs()
-    wrapper = TextWrapper(
+    wrapper = cls(
         width,
         initial_indent=initial_indent,
         subsequent_indent=subsequent_indent,
@@ -127,7 +135,7 @@ class HelpFormatter(object):
         """Decreases the indentation."""
         self.current_indent -= self.indent_increment
 
-    def write_usage(self, prog, args="", prefix="Usage: "):
+    def write_usage(self, prog, args="", prefix="Usage: ", cls=None):
         """Writes a usage line into the buffer.
 
         :param prog: the program name.
@@ -146,6 +154,7 @@ class HelpFormatter(object):
                     text_width,
                     initial_indent=usage_prefix,
                     subsequent_indent=indent,
+                    cls=cls,
                 )
             )
         else:
