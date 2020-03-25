@@ -1705,7 +1705,15 @@ class Parameter(object):
             if value is not None:
                 ctx.set_parameter_source(self.name, ParameterSource.DEFAULT)
 
-        if self.required and self.value_is_missing(value):
+        if (
+            self.required
+            and self.value_is_missing(value)
+            and (
+                not ctx.find_root().help_option_fallthrough
+                or not ctx.find_root().help_option_spotted
+            )
+            and (ctx.find_root().invoked_subcommand != "help")
+        ):
             raise MissingParameter(ctx=ctx, param=self)
 
         return value
