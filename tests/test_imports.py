@@ -2,7 +2,7 @@ import json
 import subprocess
 import sys
 
-from click._compat import WIN
+from click_hotoffthehamster._compat import WIN
 
 
 IMPORT_TEST = b"""\
@@ -18,15 +18,15 @@ import sys
 def tracking_import(module, locals=None, globals=None, fromlist=None,
                     level=0):
     rv = real_import(module, locals, globals, fromlist, level)
-    if globals and globals['__name__'].startswith('click') and level == 0:
+    if globals and globals['__name__'].startswith('click_hotoffthehamster') and level == 0:
         found_imports.add(module)
     return rv
 builtins.__import__ = tracking_import
 
-import click
+import click_hotoffthehamster
 rv = list(found_imports)
 import json
-click.echo(json.dumps(rv))
+click_hotoffthehamster.echo(json.dumps(rv))
 """
 
 ALLOWED_IMPORTS = {
@@ -67,6 +67,6 @@ def test_light_imports():
     imported = json.loads(rv)
 
     for module in imported:
-        if module == "click" or module.startswith("click."):
+        if module == "click_hotoffthehamster" or module.startswith("click_hotoffthehamster."):
             continue
         assert module in ALLOWED_IMPORTS

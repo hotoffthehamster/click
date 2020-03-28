@@ -3,10 +3,10 @@ import sys
 
 import pytest
 
-import click
-from click._compat import PY2
-from click._compat import WIN
-from click.testing import CliRunner
+import click_hotoffthehamster
+from click_hotoffthehamster._compat import PY2
+from click_hotoffthehamster._compat import WIN
+from click_hotoffthehamster.testing import CliRunner
 
 # Use the most reasonable io that users would use for the python version.
 if PY2:
@@ -16,10 +16,10 @@ else:
 
 
 def test_runner():
-    @click.command()
+    @click_hotoffthehamster.command()
     def test():
-        i = click.get_binary_stream("stdin")
-        o = click.get_binary_stream("stdout")
+        i = click_hotoffthehamster.get_binary_stream("stdin")
+        o = click_hotoffthehamster.get_binary_stream("stdout")
         while 1:
             chunk = i.read(4096)
             if not chunk:
@@ -39,10 +39,10 @@ def test_runner():
 
 
 def test_runner_with_stream():
-    @click.command()
+    @click_hotoffthehamster.command()
     def test():
-        i = click.get_binary_stream("stdin")
-        o = click.get_binary_stream("stdout")
+        i = click_hotoffthehamster.get_binary_stream("stdin")
+        o = click_hotoffthehamster.get_binary_stream("stdout")
         while 1:
             chunk = i.read(4096)
             if not chunk:
@@ -62,20 +62,20 @@ def test_runner_with_stream():
 
 
 def test_prompts():
-    @click.command()
-    @click.option("--foo", prompt=True)
+    @click_hotoffthehamster.command()
+    @click_hotoffthehamster.option("--foo", prompt=True)
     def test(foo):
-        click.echo("foo={}".format(foo))
+        click_hotoffthehamster.echo("foo={}".format(foo))
 
     runner = CliRunner()
     result = runner.invoke(test, input="wau wau\n")
     assert not result.exception
     assert result.output == "Foo: wau wau\nfoo=wau wau\n"
 
-    @click.command()
-    @click.option("--foo", prompt=True, hide_input=True)
+    @click_hotoffthehamster.command()
+    @click_hotoffthehamster.option("--foo", prompt=True, hide_input=True)
     def test(foo):
-        click.echo("foo={}".format(foo))
+        click_hotoffthehamster.echo("foo={}".format(foo))
 
     runner = CliRunner()
     result = runner.invoke(test, input="wau wau\n")
@@ -84,9 +84,9 @@ def test_prompts():
 
 
 def test_getchar():
-    @click.command()
+    @click_hotoffthehamster.command()
     def continue_it():
-        click.echo(click.getchar())
+        click_hotoffthehamster.echo(click_hotoffthehamster.getchar())
 
     runner = CliRunner()
     result = runner.invoke(continue_it, input="y")
@@ -98,7 +98,7 @@ def test_catch_exceptions():
     class CustomError(Exception):
         pass
 
-    @click.command()
+    @click_hotoffthehamster.command()
     def cli():
         raise CustomError(1)
 
@@ -120,9 +120,9 @@ def test_catch_exceptions():
 
 @pytest.mark.skipif(WIN, reason="Test does not make sense on Windows.")
 def test_with_color():
-    @click.command()
+    @click_hotoffthehamster.command()
     def cli():
-        click.secho("hello world", fg="blue")
+        click_hotoffthehamster.secho("hello world", fg="blue")
 
     runner = CliRunner()
 
@@ -131,14 +131,14 @@ def test_with_color():
     assert not result.exception
 
     result = runner.invoke(cli, color=True)
-    assert result.output == "{}\n".format(click.style("hello world", fg="blue"))
+    assert result.output == "{}\n".format(click_hotoffthehamster.style("hello world", fg="blue"))
     assert not result.exception
 
 
 def test_with_color_but_pause_not_blocking():
-    @click.command()
+    @click_hotoffthehamster.command()
     def cli():
-        click.pause()
+        click_hotoffthehamster.pause()
 
     runner = CliRunner()
     result = runner.invoke(cli, color=True)
@@ -148,42 +148,42 @@ def test_with_color_but_pause_not_blocking():
 
 def test_exit_code_and_output_from_sys_exit():
     # See issue #362
-    @click.command()
+    @click_hotoffthehamster.command()
     def cli_string():
-        click.echo("hello world")
+        click_hotoffthehamster.echo("hello world")
         sys.exit("error")
 
-    @click.command()
-    @click.pass_context
+    @click_hotoffthehamster.command()
+    @click_hotoffthehamster.pass_context
     def cli_string_ctx_exit(ctx):
-        click.echo("hello world")
+        click_hotoffthehamster.echo("hello world")
         ctx.exit("error")
 
-    @click.command()
+    @click_hotoffthehamster.command()
     def cli_int():
-        click.echo("hello world")
+        click_hotoffthehamster.echo("hello world")
         sys.exit(1)
 
-    @click.command()
-    @click.pass_context
+    @click_hotoffthehamster.command()
+    @click_hotoffthehamster.pass_context
     def cli_int_ctx_exit(ctx):
-        click.echo("hello world")
+        click_hotoffthehamster.echo("hello world")
         ctx.exit(1)
 
-    @click.command()
+    @click_hotoffthehamster.command()
     def cli_float():
-        click.echo("hello world")
+        click_hotoffthehamster.echo("hello world")
         sys.exit(1.0)
 
-    @click.command()
-    @click.pass_context
+    @click_hotoffthehamster.command()
+    @click_hotoffthehamster.pass_context
     def cli_float_ctx_exit(ctx):
-        click.echo("hello world")
+        click_hotoffthehamster.echo("hello world")
         ctx.exit(1.0)
 
-    @click.command()
+    @click_hotoffthehamster.command()
     def cli_no_error():
-        click.echo("hello world")
+        click_hotoffthehamster.echo("hello world")
 
     runner = CliRunner()
 
@@ -217,9 +217,9 @@ def test_exit_code_and_output_from_sys_exit():
 
 
 def test_env():
-    @click.command()
+    @click_hotoffthehamster.command()
     def cli_env():
-        click.echo("ENV={}".format(os.environ["TEST_CLICK_ENV"]))
+        click_hotoffthehamster.echo("ENV={}".format(os.environ["TEST_CLICK_ENV"]))
 
     runner = CliRunner()
 
@@ -235,10 +235,10 @@ def test_env():
 
 
 def test_stderr():
-    @click.command()
+    @click_hotoffthehamster.command()
     def cli_stderr():
-        click.echo("stdout")
-        click.echo("stderr", err=True)
+        click_hotoffthehamster.echo("stdout")
+        click_hotoffthehamster.echo("stderr", err=True)
 
     runner = CliRunner(mix_stderr=False)
 
@@ -257,9 +257,9 @@ def test_stderr():
     with pytest.raises(ValueError):
         result_mix.stderr
 
-    @click.command()
+    @click_hotoffthehamster.command()
     def cli_empty_stderr():
-        click.echo("stdout")
+        click_hotoffthehamster.echo("stdout")
 
     runner = CliRunner(mix_stderr=False)
 
@@ -281,10 +281,10 @@ def test_stderr():
     ],
 )
 def test_args(args, expected_output):
-    @click.command()
-    @click.option("--foo", default="bar")
+    @click_hotoffthehamster.command()
+    @click_hotoffthehamster.option("--foo", default="bar")
     def cli_args(foo):
-        click.echo(foo)
+        click_hotoffthehamster.echo(foo)
 
     runner = CliRunner()
     result = runner.invoke(cli_args, args=args)
@@ -293,9 +293,9 @@ def test_args(args, expected_output):
 
 
 def test_setting_prog_name_in_extra():
-    @click.command()
+    @click_hotoffthehamster.command()
     def cli():
-        click.echo("ok")
+        click_hotoffthehamster.echo("ok")
 
     runner = CliRunner()
     result = runner.invoke(cli, prog_name="foobar")

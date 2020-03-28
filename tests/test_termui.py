@@ -3,8 +3,8 @@ import time
 
 import pytest
 
-import click._termui_impl
-from click._compat import WIN
+import click_hotoffthehamster._termui_impl
+from click_hotoffthehamster._compat import WIN
 
 
 class FakeClock(object):
@@ -19,7 +19,7 @@ class FakeClock(object):
 
 
 def _create_progress(length=10, length_known=True, **kwargs):
-    progress = click.progressbar(tuple(range(length)))
+    progress = click_hotoffthehamster.progressbar(tuple(range(length)))
     for key, value in kwargs.items():
         setattr(progress, key, value)
     progress.length_known = length_known
@@ -30,14 +30,14 @@ def test_progressbar_strip_regression(runner, monkeypatch):
     fake_clock = FakeClock()
     label = "    padded line"
 
-    @click.command()
+    @click_hotoffthehamster.command()
     def cli():
         with _create_progress(label=label) as progress:
             for _ in progress:
                 fake_clock.advance_time()
 
     monkeypatch.setattr(time, "time", fake_clock.time)
-    monkeypatch.setattr(click._termui_impl, "isatty", lambda _: True)
+    monkeypatch.setattr(click_hotoffthehamster._termui_impl, "isatty", lambda _: True)
     assert label in runner.invoke(cli, []).output
 
 
@@ -62,14 +62,14 @@ def test_progressbar_length_hint(runner, monkeypatch):
 
     fake_clock = FakeClock()
 
-    @click.command()
+    @click_hotoffthehamster.command()
     def cli():
-        with click.progressbar(Hinted(10), label="test") as progress:
+        with click_hotoffthehamster.progressbar(Hinted(10), label="test") as progress:
             for _ in progress:
                 fake_clock.advance_time()
 
     monkeypatch.setattr(time, "time", fake_clock.time)
-    monkeypatch.setattr(click._termui_impl, "isatty", lambda _: True)
+    monkeypatch.setattr(click_hotoffthehamster._termui_impl, "isatty", lambda _: True)
     result = runner.invoke(cli, [])
     assert result.exception is None
 
@@ -78,14 +78,14 @@ def test_progressbar_hidden(runner, monkeypatch):
     fake_clock = FakeClock()
     label = "whatever"
 
-    @click.command()
+    @click_hotoffthehamster.command()
     def cli():
         with _create_progress(label=label) as progress:
             for _ in progress:
                 fake_clock.advance_time()
 
     monkeypatch.setattr(time, "time", fake_clock.time)
-    monkeypatch.setattr(click._termui_impl, "isatty", lambda _: False)
+    monkeypatch.setattr(click_hotoffthehamster._termui_impl, "isatty", lambda _: False)
     assert runner.invoke(cli, []).output == ""
 
 
@@ -184,21 +184,21 @@ def test_progressbar_format_progress_line_with_show_func(runner, test_item):
 
 def test_progressbar_init_exceptions(runner):
     with pytest.raises(TypeError, match="iterable or length is required"):
-        click.progressbar()
+        click_hotoffthehamster.progressbar()
 
 
 def test_progressbar_iter_outside_with_exceptions(runner):
     with pytest.raises(RuntimeError, match="with block"):
-        progress = click.progressbar(length=2)
+        progress = click_hotoffthehamster.progressbar(length=2)
         iter(progress)
 
 
 def test_progressbar_is_iterator(runner, monkeypatch):
     fake_clock = FakeClock()
 
-    @click.command()
+    @click_hotoffthehamster.command()
     def cli():
-        with click.progressbar(range(10), label="test") as progress:
+        with click_hotoffthehamster.progressbar(range(10), label="test") as progress:
             while True:
                 try:
                     next(progress)
@@ -207,24 +207,24 @@ def test_progressbar_is_iterator(runner, monkeypatch):
                     break
 
     monkeypatch.setattr(time, "time", fake_clock.time)
-    monkeypatch.setattr(click._termui_impl, "isatty", lambda _: True)
+    monkeypatch.setattr(click_hotoffthehamster._termui_impl, "isatty", lambda _: True)
 
     result = runner.invoke(cli, [])
     assert result.exception is None
 
 
 def test_choices_list_in_prompt(runner, monkeypatch):
-    @click.command()
-    @click.option(
-        "-g", type=click.Choice(["none", "day", "week", "month"]), prompt=True
+    @click_hotoffthehamster.command()
+    @click_hotoffthehamster.option(
+        "-g", type=click_hotoffthehamster.Choice(["none", "day", "week", "month"]), prompt=True
     )
     def cli_with_choices(g):
         pass
 
-    @click.command()
-    @click.option(
+    @click_hotoffthehamster.command()
+    @click_hotoffthehamster.option(
         "-g",
-        type=click.Choice(["none", "day", "week", "month"]),
+        type=click_hotoffthehamster.Choice(["none", "day", "week", "month"]),
         prompt=True,
         show_choices=False,
     )
@@ -242,10 +242,10 @@ def test_choices_list_in_prompt(runner, monkeypatch):
     "file_kwargs", [{"mode": "rt"}, {"mode": "rb"}, {"lazy": True}]
 )
 def test_file_prompt_default_format(runner, file_kwargs):
-    @click.command()
-    @click.option("-f", default=__file__, prompt="file", type=click.File(**file_kwargs))
+    @click_hotoffthehamster.command()
+    @click_hotoffthehamster.option("-f", default=__file__, prompt="file", type=click_hotoffthehamster.File(**file_kwargs))
     def cli(f):
-        click.echo(f.name)
+        click_hotoffthehamster.echo(f.name)
 
     result = runner.invoke(cli)
     assert result.output == "file [{0}]: \n{0}\n".format(__file__)
@@ -253,28 +253,28 @@ def test_file_prompt_default_format(runner, file_kwargs):
 
 def test_secho(runner):
     with runner.isolation() as outstreams:
-        click.secho(None, nl=False)
+        click_hotoffthehamster.secho(None, nl=False)
         bytes = outstreams[0].getvalue()
         assert bytes == b""
 
 
 def test_progressbar_yields_all_items(runner):
-    with click.progressbar(range(3)) as progress:
+    with click_hotoffthehamster.progressbar(range(3)) as progress:
         assert len(list(progress)) == 3
 
 
 def test_progressbar_update(runner, monkeypatch):
     fake_clock = FakeClock()
 
-    @click.command()
+    @click_hotoffthehamster.command()
     def cli():
-        with click.progressbar(range(4)) as progress:
+        with click_hotoffthehamster.progressbar(range(4)) as progress:
             for _ in progress:
                 fake_clock.advance_time()
                 print("")
 
     monkeypatch.setattr(time, "time", fake_clock.time)
-    monkeypatch.setattr(click._termui_impl, "isatty", lambda _: True)
+    monkeypatch.setattr(click_hotoffthehamster._termui_impl, "isatty", lambda _: True)
     output = runner.invoke(cli, []).output
 
     lines = [line for line in output.split("\n") if "[" in line]
@@ -288,9 +288,9 @@ def test_progressbar_update(runner, monkeypatch):
 def test_progressbar_item_show_func(runner, monkeypatch):
     fake_clock = FakeClock()
 
-    @click.command()
+    @click_hotoffthehamster.command()
     def cli():
-        with click.progressbar(
+        with click_hotoffthehamster.progressbar(
             range(4), item_show_func=lambda x: "Custom {}".format(x)
         ) as progress:
             for _ in progress:
@@ -298,7 +298,7 @@ def test_progressbar_item_show_func(runner, monkeypatch):
                 print("")
 
     monkeypatch.setattr(time, "time", fake_clock.time)
-    monkeypatch.setattr(click._termui_impl, "isatty", lambda _: True)
+    monkeypatch.setattr(click_hotoffthehamster._termui_impl, "isatty", lambda _: True)
     output = runner.invoke(cli, []).output
 
     lines = [line for line in output.split("\n") if "[" in line]
@@ -312,9 +312,9 @@ def test_progressbar_item_show_func(runner, monkeypatch):
 def test_progressbar_update_with_item_show_func(runner, monkeypatch):
     fake_clock = FakeClock()
 
-    @click.command()
+    @click_hotoffthehamster.command()
     def cli():
-        with click.progressbar(
+        with click_hotoffthehamster.progressbar(
             length=6, item_show_func=lambda x: "Custom {}".format(x)
         ) as progress:
             while not progress.finished:
@@ -323,7 +323,7 @@ def test_progressbar_update_with_item_show_func(runner, monkeypatch):
                 print("")
 
     monkeypatch.setattr(time, "time", fake_clock.time)
-    monkeypatch.setattr(click._termui_impl, "isatty", lambda _: True)
+    monkeypatch.setattr(click_hotoffthehamster._termui_impl, "isatty", lambda _: True)
     output = runner.invoke(cli, []).output
 
     lines = [line for line in output.split("\n") if "[" in line]
@@ -337,10 +337,10 @@ def test_progressbar_update_with_item_show_func(runner, monkeypatch):
 @pytest.mark.parametrize("echo", [True, False])
 @pytest.mark.skipif(not WIN, reason="Tests user-input using the msvcrt module.")
 def test_getchar_windows(runner, monkeypatch, key_char, echo):
-    monkeypatch.setattr(click._termui_impl.msvcrt, "getwche", lambda: key_char)
-    monkeypatch.setattr(click._termui_impl.msvcrt, "getwch", lambda: key_char)
-    monkeypatch.setattr(click.termui, "_getchar", None)
-    assert click.getchar(echo) == key_char
+    monkeypatch.setattr(click_hotoffthehamster._termui_impl.msvcrt, "getwche", lambda: key_char)
+    monkeypatch.setattr(click_hotoffthehamster._termui_impl.msvcrt, "getwch", lambda: key_char)
+    monkeypatch.setattr(click_hotoffthehamster.termui, "_getchar", None)
+    assert click_hotoffthehamster.getchar(echo) == key_char
 
 
 @pytest.mark.parametrize(
@@ -352,10 +352,10 @@ def test_getchar_windows(runner, monkeypatch, key_char, echo):
 def test_getchar_special_key_windows(runner, monkeypatch, special_key_char, key_char):
     ordered_inputs = [key_char, special_key_char]
     monkeypatch.setattr(
-        click._termui_impl.msvcrt, "getwch", lambda: ordered_inputs.pop()
+        click_hotoffthehamster._termui_impl.msvcrt, "getwch", lambda: ordered_inputs.pop()
     )
-    monkeypatch.setattr(click.termui, "_getchar", None)
-    assert click.getchar() == special_key_char + key_char
+    monkeypatch.setattr(click_hotoffthehamster.termui, "_getchar", None)
+    assert click_hotoffthehamster.getchar() == special_key_char + key_char
 
 
 @pytest.mark.parametrize(
@@ -363,8 +363,8 @@ def test_getchar_special_key_windows(runner, monkeypatch, special_key_char, key_
 )
 @pytest.mark.skipif(not WIN, reason="Tests user-input using the msvcrt module.")
 def test_getchar_windows_exceptions(runner, monkeypatch, key_char, exc):
-    monkeypatch.setattr(click._termui_impl.msvcrt, "getwch", lambda: key_char)
-    monkeypatch.setattr(click.termui, "_getchar", None)
+    monkeypatch.setattr(click_hotoffthehamster._termui_impl.msvcrt, "getwch", lambda: key_char)
+    monkeypatch.setattr(click_hotoffthehamster.termui, "_getchar", None)
 
     with pytest.raises(exc):
-        click.getchar()
+        click_hotoffthehamster.getchar()

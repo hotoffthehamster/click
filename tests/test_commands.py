@@ -1,19 +1,19 @@
 # -*- coding: utf-8 -*-
 import re
 
-import click
+import click_hotoffthehamster
 
 
 def test_other_command_invoke(runner):
-    @click.command()
-    @click.pass_context
+    @click_hotoffthehamster.command()
+    @click_hotoffthehamster.pass_context
     def cli(ctx):
         return ctx.invoke(other_cmd, arg=42)
 
-    @click.command()
-    @click.argument("arg", type=click.INT)
+    @click_hotoffthehamster.command()
+    @click_hotoffthehamster.argument("arg", type=click_hotoffthehamster.INT)
     def other_cmd(arg):
-        click.echo(arg)
+        click_hotoffthehamster.echo(arg)
 
     result = runner.invoke(cli, [])
     assert not result.exception
@@ -21,16 +21,16 @@ def test_other_command_invoke(runner):
 
 
 def test_other_command_forward(runner):
-    cli = click.Group()
+    cli = click_hotoffthehamster.Group()
 
     @cli.command()
-    @click.option("--count", default=1)
+    @click_hotoffthehamster.option("--count", default=1)
     def test(count):
-        click.echo("Count: {:d}".format(count))
+        click_hotoffthehamster.echo("Count: {:d}".format(count))
 
     @cli.command()
-    @click.option("--count", default=1)
-    @click.pass_context
+    @click_hotoffthehamster.option("--count", default=1)
+    @click_hotoffthehamster.pass_context
     def dist(ctx, count):
         ctx.forward(test)
         ctx.invoke(test, count=42)
@@ -41,7 +41,7 @@ def test_other_command_forward(runner):
 
 
 def test_auto_shorthelp(runner):
-    @click.group()
+    @click_hotoffthehamster.group()
     def cli():
         pass
 
@@ -76,7 +76,7 @@ def test_auto_shorthelp(runner):
 
 
 def test_no_args_is_help(runner):
-    @click.command(no_args_is_help=True)
+    @click_hotoffthehamster.command(no_args_is_help=True)
     def cli():
         pass
 
@@ -86,14 +86,14 @@ def test_no_args_is_help(runner):
 
 
 def test_default_maps(runner):
-    @click.group()
+    @click_hotoffthehamster.group()
     def cli():
         pass
 
     @cli.command()
-    @click.option("--name", default="normal")
+    @click_hotoffthehamster.option("--name", default="normal")
     def foo(name):
-        click.echo(name)
+        click_hotoffthehamster.echo(name)
 
     result = runner.invoke(cli, ["foo"], default_map={"foo": {"name": "changed"}})
 
@@ -102,14 +102,14 @@ def test_default_maps(runner):
 
 
 def test_group_with_args(runner):
-    @click.group()
-    @click.argument("obj")
+    @click_hotoffthehamster.group()
+    @click_hotoffthehamster.argument("obj")
     def cli(obj):
-        click.echo("obj={}".format(obj))
+        click_hotoffthehamster.echo("obj={}".format(obj))
 
     @cli.command()
     def move():
-        click.echo("move")
+        click_hotoffthehamster.echo("move")
 
     result = runner.invoke(cli, [])
     assert result.exit_code == 0
@@ -131,13 +131,13 @@ def test_group_with_args(runner):
 def test_base_command(runner):
     import optparse
 
-    @click.group()
+    @click_hotoffthehamster.group()
     def cli():
         pass
 
-    class OptParseCommand(click.BaseCommand):
+    class OptParseCommand(click_hotoffthehamster.BaseCommand):
         def __init__(self, name, parser, callback):
-            click.BaseCommand.__init__(self, name)
+            click_hotoffthehamster.BaseCommand.__init__(self, name)
             self.parser = parser
             self.callback = callback
 
@@ -172,9 +172,9 @@ def test_base_command(runner):
     )
 
     def test_callback(args, filename, verbose):
-        click.echo(" ".join(args))
-        click.echo(filename)
-        click.echo(verbose)
+        click_hotoffthehamster.echo(" ".join(args))
+        click_hotoffthehamster.echo(filename)
+        click_hotoffthehamster.echo(verbose)
 
     cli.add_command(OptParseCommand("test", parser, test_callback))
 
@@ -203,18 +203,18 @@ def test_base_command(runner):
 def test_object_propagation(runner):
     for chain in False, True:
 
-        @click.group(chain=chain)
-        @click.option("--debug/--no-debug", default=False)
-        @click.pass_context
+        @click_hotoffthehamster.group(chain=chain)
+        @click_hotoffthehamster.option("--debug/--no-debug", default=False)
+        @click_hotoffthehamster.pass_context
         def cli(ctx, debug):
             if ctx.obj is None:
                 ctx.obj = {}
             ctx.obj["DEBUG"] = debug
 
         @cli.command()
-        @click.pass_context
+        @click_hotoffthehamster.pass_context
         def sync(ctx):
-            click.echo("Debug is {}".format("on" if ctx.obj["DEBUG"] else "off"))
+            click_hotoffthehamster.echo("Debug is {}".format("on" if ctx.obj["DEBUG"] else "off"))
 
         result = runner.invoke(cli, ["sync"])
         assert result.exception is None
@@ -222,17 +222,17 @@ def test_object_propagation(runner):
 
 
 def test_other_command_invoke_with_defaults(runner):
-    @click.command()
-    @click.pass_context
+    @click_hotoffthehamster.command()
+    @click_hotoffthehamster.pass_context
     def cli(ctx):
         return ctx.invoke(other_cmd)
 
-    @click.command()
-    @click.option("--foo", type=click.INT, default=42)
-    @click.pass_context
+    @click_hotoffthehamster.command()
+    @click_hotoffthehamster.option("--foo", type=click_hotoffthehamster.INT, default=42)
+    @click_hotoffthehamster.pass_context
     def other_cmd(ctx, foo):
         assert ctx.info_name == "other-cmd"
-        click.echo(foo)
+        click_hotoffthehamster.echo(foo)
 
     result = runner.invoke(cli, [])
     assert not result.exception
@@ -240,18 +240,18 @@ def test_other_command_invoke_with_defaults(runner):
 
 
 def test_invoked_subcommand(runner):
-    @click.group(invoke_without_command=True)
-    @click.pass_context
+    @click_hotoffthehamster.group(invoke_without_command=True)
+    @click_hotoffthehamster.pass_context
     def cli(ctx):
         if ctx.invoked_subcommand is None:
-            click.echo("no subcommand, use default")
+            click_hotoffthehamster.echo("no subcommand, use default")
             ctx.invoke(sync)
         else:
-            click.echo("invoke subcommand")
+            click_hotoffthehamster.echo("invoke subcommand")
 
     @cli.command()
     def sync():
-        click.echo("in subcommand")
+        click_hotoffthehamster.echo("in subcommand")
 
     result = runner.invoke(cli, ["sync"])
     assert not result.exception
@@ -263,12 +263,12 @@ def test_invoked_subcommand(runner):
 
 
 def test_unprocessed_options(runner):
-    @click.command(context_settings=dict(ignore_unknown_options=True))
-    @click.argument("args", nargs=-1, type=click.UNPROCESSED)
-    @click.option("--verbose", "-v", count=True)
+    @click_hotoffthehamster.command(context_settings=dict(ignore_unknown_options=True))
+    @click_hotoffthehamster.argument("args", nargs=-1, type=click_hotoffthehamster.UNPROCESSED)
+    @click_hotoffthehamster.option("--verbose", "-v", count=True)
     def cli(verbose, args):
-        click.echo("Verbosity: {}".format(verbose))
-        click.echo("Args: {}".format("|".join(args)))
+        click_hotoffthehamster.echo("Verbosity: {}".format(verbose))
+        click_hotoffthehamster.echo("Args: {}".format("|".join(args)))
 
     result = runner.invoke(cli, ["-foo", "-vvvvx", "--muhaha", "x", "y", "-x"])
     assert not result.exception
@@ -279,7 +279,7 @@ def test_unprocessed_options(runner):
 
 
 def test_deprecated_in_help_messages(runner):
-    @click.command(deprecated=True)
+    @click_hotoffthehamster.command(deprecated=True)
     def cmd_with_help():
         """CLI HELP"""
         pass
@@ -287,7 +287,7 @@ def test_deprecated_in_help_messages(runner):
     result = runner.invoke(cmd_with_help, ["--help"])
     assert "(DEPRECATED)" in result.output
 
-    @click.command(deprecated=True)
+    @click_hotoffthehamster.command(deprecated=True)
     def cmd_without_help():
         pass
 
@@ -296,7 +296,7 @@ def test_deprecated_in_help_messages(runner):
 
 
 def test_deprecated_in_invocation(runner):
-    @click.command(deprecated=True)
+    @click_hotoffthehamster.command(deprecated=True)
     def deprecated_cmd():
         pass
 

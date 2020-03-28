@@ -1,18 +1,18 @@
 import pytest
 
-import click
-from click._compat import should_strip_ansi
-from click._compat import WIN
+import click_hotoffthehamster
+from click_hotoffthehamster._compat import should_strip_ansi
+from click_hotoffthehamster._compat import WIN
 
 
 def test_legacy_callbacks(runner):
     def legacy_callback(ctx, value):
         return value.upper()
 
-    @click.command()
-    @click.option("--foo", callback=legacy_callback)
+    @click_hotoffthehamster.command()
+    @click_hotoffthehamster.option("--foo", callback=legacy_callback)
     def cli(foo):
-        click.echo(foo)
+        click_hotoffthehamster.echo(foo)
 
     with pytest.warns(DeprecationWarning, match="2-arg style"):
         result = runner.invoke(cli, ["--foo", "wat"])
@@ -21,7 +21,7 @@ def test_legacy_callbacks(runner):
 
 
 def test_bash_func_name():
-    from click._bashcomplete import get_completion_script
+    from click_hotoffthehamster._bashcomplete import get_completion_script
 
     script = get_completion_script("foo-bar baz_blah", "_COMPLETE_VAR", "bash").strip()
     assert script.startswith("_foo_barbaz_blah_completion()")
@@ -29,7 +29,7 @@ def test_bash_func_name():
 
 
 def test_zsh_func_name():
-    from click._bashcomplete import get_completion_script
+    from click_hotoffthehamster._bashcomplete import get_completion_script
 
     script = get_completion_script("foo-bar", "_COMPLETE_VAR", "zsh").strip()
     assert script.startswith("#compdef foo-bar")

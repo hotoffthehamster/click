@@ -3,18 +3,18 @@ import sys
 
 import pytest
 
-import click
-from click._compat import PY2
-from click._compat import text_type
+import click_hotoffthehamster
+from click_hotoffthehamster._compat import PY2
+from click_hotoffthehamster._compat import text_type
 
 
 def test_nargs_star(runner):
-    @click.command()
-    @click.argument("src", nargs=-1)
-    @click.argument("dst")
+    @click_hotoffthehamster.command()
+    @click_hotoffthehamster.argument("src", nargs=-1)
+    @click_hotoffthehamster.argument("dst")
     def copy(src, dst):
-        click.echo("src={}".format("|".join(src)))
-        click.echo("dst={}".format(dst))
+        click_hotoffthehamster.echo("src={}".format("|".join(src)))
+        click_hotoffthehamster.echo("dst={}".format(dst))
 
     result = runner.invoke(copy, ["foo.txt", "bar.txt", "dir"])
     assert not result.exception
@@ -24,19 +24,19 @@ def test_nargs_star(runner):
 def test_nargs_default(runner):
     with pytest.raises(TypeError, match="nargs=-1"):
 
-        @click.command()
-        @click.argument("src", nargs=-1, default=42)
+        @click_hotoffthehamster.command()
+        @click_hotoffthehamster.argument("src", nargs=-1, default=42)
         def copy(src):
             pass
 
 
 def test_nargs_tup(runner):
-    @click.command()
-    @click.argument("name", nargs=1)
-    @click.argument("point", nargs=2, type=click.INT)
+    @click_hotoffthehamster.command()
+    @click_hotoffthehamster.argument("name", nargs=1)
+    @click_hotoffthehamster.argument("point", nargs=2, type=click_hotoffthehamster.INT)
     def copy(name, point):
-        click.echo("name={}".format(name))
-        click.echo("point={0[0]}/{0[1]}".format(point))
+        click_hotoffthehamster.echo("name={}".format(name))
+        click_hotoffthehamster.echo("point={0[0]}/{0[1]}".format(point))
 
     result = runner.invoke(copy, ["peter", "1", "2"])
     assert not result.exception
@@ -46,17 +46,17 @@ def test_nargs_tup(runner):
 def test_nargs_tup_composite(runner):
     variations = [
         dict(type=(str, int)),
-        dict(type=click.Tuple([str, int])),
-        dict(nargs=2, type=click.Tuple([str, int])),
+        dict(type=click_hotoffthehamster.Tuple([str, int])),
+        dict(nargs=2, type=click_hotoffthehamster.Tuple([str, int])),
         dict(nargs=2, type=(str, int)),
     ]
 
     for opts in variations:
 
-        @click.command()
-        @click.argument("item", **opts)
+        @click_hotoffthehamster.command()
+        @click_hotoffthehamster.argument("item", **opts)
         def copy(item):
-            click.echo("name={0[0]} id={0[1]:d}".format(item))
+            click_hotoffthehamster.echo("name={0[0]} id={0[1]:d}".format(item))
 
         result = runner.invoke(copy, ["peter", "1"])
         assert not result.exception
@@ -64,10 +64,10 @@ def test_nargs_tup_composite(runner):
 
 
 def test_nargs_err(runner):
-    @click.command()
-    @click.argument("x")
+    @click_hotoffthehamster.command()
+    @click_hotoffthehamster.argument("x")
     def copy(x):
-        click.echo(x)
+        click_hotoffthehamster.echo(x)
 
     result = runner.invoke(copy, ["foo"])
     assert not result.exception
@@ -79,8 +79,8 @@ def test_nargs_err(runner):
 
 
 def test_bytes_args(runner, monkeypatch):
-    @click.command()
-    @click.argument("arg")
+    @click_hotoffthehamster.command()
+    @click_hotoffthehamster.argument("arg")
     def from_bytes(arg):
         assert isinstance(
             arg, text_type
@@ -104,9 +104,9 @@ def test_bytes_args(runner, monkeypatch):
 
 
 def test_file_args(runner):
-    @click.command()
-    @click.argument("input", type=click.File("rb"))
-    @click.argument("output", type=click.File("wb"))
+    @click_hotoffthehamster.command()
+    @click_hotoffthehamster.argument("input", type=click_hotoffthehamster.File("rb"))
+    @click_hotoffthehamster.argument("output", type=click_hotoffthehamster.File("wb"))
     def inout(input, output):
         while True:
             chunk = input.read(1024)
@@ -127,10 +127,10 @@ def test_file_args(runner):
 
 
 def test_path_args(runner):
-    @click.command()
-    @click.argument("input", type=click.Path(dir_okay=False, allow_dash=True))
+    @click_hotoffthehamster.command()
+    @click_hotoffthehamster.argument("input", type=click_hotoffthehamster.Path(dir_okay=False, allow_dash=True))
     def foo(input):
-        click.echo(input)
+        click_hotoffthehamster.echo(input)
 
     result = runner.invoke(foo, ["-"])
     assert result.output == "-\n"
@@ -138,8 +138,8 @@ def test_path_args(runner):
 
 
 def test_file_atomics(runner):
-    @click.command()
-    @click.argument("output", type=click.File("wb", atomic=True))
+    @click_hotoffthehamster.command()
+    @click_hotoffthehamster.argument("output", type=click_hotoffthehamster.File("wb", atomic=True))
     def inout(output):
         output.write(b"Foo bar baz\n")
         output.flush()
@@ -158,8 +158,8 @@ def test_file_atomics(runner):
 
 
 def test_stdout_default(runner):
-    @click.command()
-    @click.argument("output", type=click.File("w"), default="-")
+    @click_hotoffthehamster.command()
+    @click_hotoffthehamster.argument("output", type=click_hotoffthehamster.File("w"), default="-")
     def inout(output):
         output.write("Foo bar baz\n")
         output.flush()
@@ -170,10 +170,10 @@ def test_stdout_default(runner):
 
 
 def test_nargs_envvar(runner):
-    @click.command()
-    @click.option("--arg", nargs=2)
+    @click_hotoffthehamster.command()
+    @click_hotoffthehamster.option("--arg", nargs=2)
     def cmd(arg):
-        click.echo("|".join(arg))
+        click_hotoffthehamster.echo("|".join(arg))
 
     result = runner.invoke(
         cmd, [], auto_envvar_prefix="TEST", env={"TEST_ARG": "foo bar"}
@@ -181,10 +181,10 @@ def test_nargs_envvar(runner):
     assert not result.exception
     assert result.output == "foo|bar\n"
 
-    @click.command()
-    @click.option("--arg", envvar="X", nargs=2)
+    @click_hotoffthehamster.command()
+    @click_hotoffthehamster.option("--arg", envvar="X", nargs=2)
     def cmd(arg):
-        click.echo("|".join(arg))
+        click_hotoffthehamster.echo("|".join(arg))
 
     result = runner.invoke(cmd, [], env={"X": "foo bar"})
     assert not result.exception
@@ -192,19 +192,19 @@ def test_nargs_envvar(runner):
 
 
 def test_empty_nargs(runner):
-    @click.command()
-    @click.argument("arg", nargs=-1)
+    @click_hotoffthehamster.command()
+    @click_hotoffthehamster.argument("arg", nargs=-1)
     def cmd(arg):
-        click.echo("arg:{}".format("|".join(arg)))
+        click_hotoffthehamster.echo("arg:{}".format("|".join(arg)))
 
     result = runner.invoke(cmd, [])
     assert result.exit_code == 0
     assert result.output == "arg:\n"
 
-    @click.command()
-    @click.argument("arg", nargs=-1, required=True)
+    @click_hotoffthehamster.command()
+    @click_hotoffthehamster.argument("arg", nargs=-1, required=True)
     def cmd2(arg):
-        click.echo("arg:{}".format("|".join(arg)))
+        click_hotoffthehamster.echo("arg:{}".format("|".join(arg)))
 
     result = runner.invoke(cmd2, [])
     assert result.exit_code == 2
@@ -212,10 +212,10 @@ def test_empty_nargs(runner):
 
 
 def test_missing_arg(runner):
-    @click.command()
-    @click.argument("arg")
+    @click_hotoffthehamster.command()
+    @click_hotoffthehamster.argument("arg")
     def cmd(arg):
-        click.echo("arg:{}".format(arg))
+        click_hotoffthehamster.echo("arg:{}".format(arg))
 
     result = runner.invoke(cmd, [])
     assert result.exit_code == 2
@@ -223,19 +223,19 @@ def test_missing_arg(runner):
 
 
 def test_missing_argument_string_cast():
-    ctx = click.Context(click.Command(""))
+    ctx = click_hotoffthehamster.Context(click_hotoffthehamster.Command(""))
 
-    with pytest.raises(click.MissingParameter) as excinfo:
-        click.Argument(["a"], required=True).full_process_value(ctx, None)
+    with pytest.raises(click_hotoffthehamster.MissingParameter) as excinfo:
+        click_hotoffthehamster.Argument(["a"], required=True).full_process_value(ctx, None)
 
     assert str(excinfo.value) == "missing parameter: a"
 
 
 def test_implicit_non_required(runner):
-    @click.command()
-    @click.argument("f", default="test")
+    @click_hotoffthehamster.command()
+    @click_hotoffthehamster.argument("f", default="test")
     def cli(f):
-        click.echo(f)
+        click_hotoffthehamster.echo(f)
 
     result = runner.invoke(cli, [])
     assert result.exit_code == 0
@@ -243,13 +243,13 @@ def test_implicit_non_required(runner):
 
 
 def test_eat_options(runner):
-    @click.command()
-    @click.option("-f")
-    @click.argument("files", nargs=-1)
+    @click_hotoffthehamster.command()
+    @click_hotoffthehamster.option("-f")
+    @click_hotoffthehamster.argument("files", nargs=-1)
     def cmd(f, files):
         for filename in files:
-            click.echo(filename)
-        click.echo(f)
+            click_hotoffthehamster.echo(filename)
+        click_hotoffthehamster.echo(f)
 
     result = runner.invoke(cmd, ["--", "-foo", "bar"])
     assert result.output.splitlines() == ["-foo", "bar", ""]
@@ -259,26 +259,26 @@ def test_eat_options(runner):
 
 
 def test_nargs_star_ordering(runner):
-    @click.command()
-    @click.argument("a", nargs=-1)
-    @click.argument("b")
-    @click.argument("c")
+    @click_hotoffthehamster.command()
+    @click_hotoffthehamster.argument("a", nargs=-1)
+    @click_hotoffthehamster.argument("b")
+    @click_hotoffthehamster.argument("c")
     def cmd(a, b, c):
         for arg in (a, b, c):
-            click.echo(arg)
+            click_hotoffthehamster.echo(arg)
 
     result = runner.invoke(cmd, ["a", "b", "c"])
     assert result.output.splitlines() == ["(u'a',)" if PY2 else "('a',)", "b", "c"]
 
 
 def test_nargs_specified_plus_star_ordering(runner):
-    @click.command()
-    @click.argument("a", nargs=-1)
-    @click.argument("b")
-    @click.argument("c", nargs=2)
+    @click_hotoffthehamster.command()
+    @click_hotoffthehamster.argument("a", nargs=-1)
+    @click_hotoffthehamster.argument("b")
+    @click_hotoffthehamster.argument("c", nargs=2)
     def cmd(a, b, c):
         for arg in (a, b, c):
-            click.echo(arg)
+            click_hotoffthehamster.echo(arg)
 
     result = runner.invoke(cmd, ["a", "b", "c", "d", "e", "f"])
     assert result.output.splitlines() == [
@@ -289,11 +289,11 @@ def test_nargs_specified_plus_star_ordering(runner):
 
 
 def test_defaults_for_nargs(runner):
-    @click.command()
-    @click.argument("a", nargs=2, type=int, default=(1, 2))
+    @click_hotoffthehamster.command()
+    @click_hotoffthehamster.argument("a", nargs=2, type=int, default=(1, 2))
     def cmd(a):
         x, y = a
-        click.echo(x + y)
+        click_hotoffthehamster.echo(x + y)
 
     result = runner.invoke(cmd, [])
     assert result.output.strip() == "3"
@@ -309,7 +309,7 @@ def test_defaults_for_nargs(runner):
 def test_multiple_param_decls_not_allowed(runner):
     with pytest.raises(TypeError):
 
-        @click.command()
-        @click.argument("x", click.Choice(["a", "b"]))
+        @click_hotoffthehamster.command()
+        @click_hotoffthehamster.argument("x", click_hotoffthehamster.Choice(["a", "b"]))
         def copy(x):
-            click.echo(x)
+            click_hotoffthehamster.echo(x)

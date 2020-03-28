@@ -2,29 +2,29 @@ import sys
 
 import pytest
 
-import click
+import click_hotoffthehamster
 
 
 def debug():
-    click.echo(
+    click_hotoffthehamster.echo(
         "{}={}".format(
-            sys._getframe(1).f_code.co_name, "|".join(click.get_current_context().args)
+            sys._getframe(1).f_code.co_name, "|".join(click_hotoffthehamster.get_current_context().args)
         )
     )
 
 
 def test_basic_chaining(runner):
-    @click.group(chain=True)
+    @click_hotoffthehamster.group(chain=True)
     def cli():
         pass
 
     @cli.command("sdist")
     def sdist():
-        click.echo("sdist called")
+        click_hotoffthehamster.echo("sdist called")
 
     @cli.command("bdist")
     def bdist():
-        click.echo("bdist called")
+        click_hotoffthehamster.echo("bdist called")
 
     result = runner.invoke(cli, ["bdist", "sdist", "bdist"])
     assert not result.exception
@@ -36,7 +36,7 @@ def test_basic_chaining(runner):
 
 
 def test_chaining_help(runner):
-    @click.group(chain=True)
+    @click_hotoffthehamster.group(chain=True)
     def cli():
         """ROOT HELP"""
         pass
@@ -44,12 +44,12 @@ def test_chaining_help(runner):
     @cli.command("sdist")
     def sdist():
         """SDIST HELP"""
-        click.echo("sdist called")
+        click_hotoffthehamster.echo("sdist called")
 
     @cli.command("bdist")
     def bdist():
         """BDIST HELP"""
-        click.echo("bdist called")
+        click_hotoffthehamster.echo("bdist called")
 
     result = runner.invoke(cli, ["--help"])
     assert not result.exception
@@ -70,19 +70,19 @@ def test_chaining_help(runner):
 
 
 def test_chaining_with_options(runner):
-    @click.group(chain=True)
+    @click_hotoffthehamster.group(chain=True)
     def cli():
         pass
 
     @cli.command("sdist")
-    @click.option("--format")
+    @click_hotoffthehamster.option("--format")
     def sdist(format):
-        click.echo("sdist called {}".format(format))
+        click_hotoffthehamster.echo("sdist called {}".format(format))
 
     @cli.command("bdist")
-    @click.option("--format")
+    @click_hotoffthehamster.option("--format")
     def bdist(format):
-        click.echo("bdist called {}".format(format))
+        click_hotoffthehamster.echo("bdist called {}".format(format))
 
     result = runner.invoke(cli, ["bdist", "--format=1", "sdist", "--format=2"])
     assert not result.exception
@@ -90,19 +90,19 @@ def test_chaining_with_options(runner):
 
 
 def test_chaining_with_arguments(runner):
-    @click.group(chain=True)
+    @click_hotoffthehamster.group(chain=True)
     def cli():
         pass
 
     @cli.command("sdist")
-    @click.argument("format")
+    @click_hotoffthehamster.argument("format")
     def sdist(format):
-        click.echo("sdist called {}".format(format))
+        click_hotoffthehamster.echo("sdist called {}".format(format))
 
     @cli.command("bdist")
-    @click.argument("format")
+    @click_hotoffthehamster.argument("format")
     def bdist(format):
-        click.echo("bdist called {}".format(format))
+        click_hotoffthehamster.echo("bdist called {}".format(format))
 
     result = runner.invoke(cli, ["bdist", "1", "sdist", "2"])
     assert not result.exception
@@ -110,8 +110,8 @@ def test_chaining_with_arguments(runner):
 
 
 def test_pipeline(runner):
-    @click.group(chain=True, invoke_without_command=True)
-    @click.option("-i", "--input", type=click.File("r"))
+    @click_hotoffthehamster.group(chain=True, invoke_without_command=True)
+    @click_hotoffthehamster.option("-i", "--input", type=click_hotoffthehamster.File("r"))
     def cli(input):
         pass
 
@@ -121,7 +121,7 @@ def test_pipeline(runner):
         for processor in processors:
             iterator = processor(iterator)
         for item in iterator:
-            click.echo(item)
+            click_hotoffthehamster.echo(item)
 
     @cli.command("uppercase")
     def make_uppercase():
@@ -153,7 +153,7 @@ def test_pipeline(runner):
 
 
 def test_args_and_chain(runner):
-    @click.group(chain=True)
+    @click_hotoffthehamster.group(chain=True)
     def cli():
         debug()
 
@@ -177,26 +177,26 @@ def test_args_and_chain(runner):
 def test_multicommand_arg_behavior(runner):
     with pytest.raises(RuntimeError):
 
-        @click.group(chain=True)
-        @click.argument("forbidden", required=False)
+        @click_hotoffthehamster.group(chain=True)
+        @click_hotoffthehamster.argument("forbidden", required=False)
         def bad_cli():
             pass
 
     with pytest.raises(RuntimeError):
 
-        @click.group(chain=True)
-        @click.argument("forbidden", nargs=-1)
+        @click_hotoffthehamster.group(chain=True)
+        @click_hotoffthehamster.argument("forbidden", nargs=-1)
         def bad_cli2():
             pass
 
-    @click.group(chain=True)
-    @click.argument("arg")
+    @click_hotoffthehamster.group(chain=True)
+    @click_hotoffthehamster.argument("arg")
     def cli(arg):
-        click.echo("cli:{}".format(arg))
+        click_hotoffthehamster.echo("cli:{}".format(arg))
 
     @cli.command()
     def a():
-        click.echo("a")
+        click_hotoffthehamster.echo("a")
 
     result = runner.invoke(cli, ["foo", "a"])
     assert not result.exception
@@ -205,7 +205,7 @@ def test_multicommand_arg_behavior(runner):
 
 @pytest.mark.xfail
 def test_multicommand_chaining(runner):
-    @click.group(chain=True)
+    @click_hotoffthehamster.group(chain=True)
     def cli():
         debug()
 

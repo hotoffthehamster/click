@@ -4,16 +4,16 @@ import re
 
 import pytest
 
-import click
-from click._compat import text_type
+import click_hotoffthehamster
+from click_hotoffthehamster._compat import text_type
 
 
 def test_prefixes(runner):
-    @click.command()
-    @click.option("++foo", is_flag=True, help="das foo")
-    @click.option("--bar", is_flag=True, help="das bar")
+    @click_hotoffthehamster.command()
+    @click_hotoffthehamster.option("++foo", is_flag=True, help="das foo")
+    @click_hotoffthehamster.option("--bar", is_flag=True, help="das bar")
     def cli(foo, bar):
-        click.echo("foo={} bar={}".format(foo, bar))
+        click_hotoffthehamster.echo("foo={} bar={}".format(foo, bar))
 
     result = runner.invoke(cli, ["++foo", "--bar"])
     assert not result.exception
@@ -27,8 +27,8 @@ def test_prefixes(runner):
 def test_invalid_option(runner):
     with pytest.raises(TypeError, match="name was passed"):
 
-        @click.command()
-        @click.option("foo")
+        @click_hotoffthehamster.command()
+        @click_hotoffthehamster.option("foo")
         def cli(foo):
             pass
 
@@ -36,18 +36,18 @@ def test_invalid_option(runner):
 def test_invalid_nargs(runner):
     with pytest.raises(TypeError, match="nargs < 0"):
 
-        @click.command()
-        @click.option("--foo", nargs=-1)
+        @click_hotoffthehamster.command()
+        @click_hotoffthehamster.option("--foo", nargs=-1)
         def cli(foo):
             pass
 
 
 def test_nargs_tup_composite_mult(runner):
-    @click.command()
-    @click.option("--item", type=(str, int), multiple=True)
+    @click_hotoffthehamster.command()
+    @click_hotoffthehamster.option("--item", type=(str, int), multiple=True)
     def copy(item):
         for item in item:
-            click.echo("name={0[0]} id={0[1]:d}".format(item))
+            click_hotoffthehamster.echo("name={0[0]} id={0[1]:d}".format(item))
 
     result = runner.invoke(copy, ["--item", "peter", "1", "--item", "max", "2"])
     assert not result.exception
@@ -55,10 +55,10 @@ def test_nargs_tup_composite_mult(runner):
 
 
 def test_counting(runner):
-    @click.command()
-    @click.option("-v", count=True, help="Verbosity", type=click.IntRange(0, 3))
+    @click_hotoffthehamster.command()
+    @click_hotoffthehamster.option("-v", count=True, help="Verbosity", type=click_hotoffthehamster.IntRange(0, 3))
     def cli(v):
-        click.echo("verbosity={:d}".format(v))
+        click_hotoffthehamster.echo("verbosity={:d}".format(v))
 
     result = runner.invoke(cli, ["-vvv"])
     assert not result.exception
@@ -81,7 +81,7 @@ def test_counting(runner):
 
 @pytest.mark.parametrize("unknown_flag", ["--foo", "-f"])
 def test_unknown_options(runner, unknown_flag):
-    @click.command()
+    @click_hotoffthehamster.command()
     def cli():
         pass
 
@@ -91,10 +91,10 @@ def test_unknown_options(runner, unknown_flag):
 
 
 def test_multiple_required(runner):
-    @click.command()
-    @click.option("-m", "--message", multiple=True, required=True)
+    @click_hotoffthehamster.command()
+    @click_hotoffthehamster.option("-m", "--message", multiple=True, required=True)
     def cli(message):
-        click.echo("\n".join(message))
+        click_hotoffthehamster.echo("\n".join(message))
 
     result = runner.invoke(cli, ["-m", "foo", "-mbar"])
     assert not result.exception
@@ -106,10 +106,10 @@ def test_multiple_required(runner):
 
 
 def test_empty_envvar(runner):
-    @click.command()
-    @click.option("--mypath", type=click.Path(exists=True), envvar="MYPATH")
+    @click_hotoffthehamster.command()
+    @click_hotoffthehamster.option("--mypath", type=click_hotoffthehamster.Path(exists=True), envvar="MYPATH")
     def cli(mypath):
-        click.echo("mypath: {}".format(mypath))
+        click_hotoffthehamster.echo("mypath: {}".format(mypath))
 
     result = runner.invoke(cli, [], env={"MYPATH": ""})
     assert result.exit_code == 0
@@ -117,10 +117,10 @@ def test_empty_envvar(runner):
 
 
 def test_multiple_envvar(runner):
-    @click.command()
-    @click.option("--arg", multiple=True)
+    @click_hotoffthehamster.command()
+    @click_hotoffthehamster.option("--arg", multiple=True)
     def cmd(arg):
-        click.echo("|".join(arg))
+        click_hotoffthehamster.echo("|".join(arg))
 
     result = runner.invoke(
         cmd, [], auto_envvar_prefix="TEST", env={"TEST_ARG": "foo bar baz"}
@@ -128,19 +128,19 @@ def test_multiple_envvar(runner):
     assert not result.exception
     assert result.output == "foo|bar|baz\n"
 
-    @click.command()
-    @click.option("--arg", multiple=True, envvar="X")
+    @click_hotoffthehamster.command()
+    @click_hotoffthehamster.option("--arg", multiple=True, envvar="X")
     def cmd(arg):
-        click.echo("|".join(arg))
+        click_hotoffthehamster.echo("|".join(arg))
 
     result = runner.invoke(cmd, [], env={"X": "foo bar baz"})
     assert not result.exception
     assert result.output == "foo|bar|baz\n"
 
-    @click.command()
-    @click.option("--arg", multiple=True, type=click.Path())
+    @click_hotoffthehamster.command()
+    @click_hotoffthehamster.option("--arg", multiple=True, type=click_hotoffthehamster.Path())
     def cmd(arg):
-        click.echo("|".join(arg))
+        click_hotoffthehamster.echo("|".join(arg))
 
     result = runner.invoke(
         cmd,
@@ -153,9 +153,9 @@ def test_multiple_envvar(runner):
 
 
 def test_multiple_default_help(runner):
-    @click.command()
-    @click.option("--arg1", multiple=True, default=("foo", "bar"), show_default=True)
-    @click.option("--arg2", multiple=True, default=(1, 2), type=int, show_default=True)
+    @click_hotoffthehamster.command()
+    @click_hotoffthehamster.option("--arg1", multiple=True, default=("foo", "bar"), show_default=True)
+    @click_hotoffthehamster.option("--arg2", multiple=True, default=(1, 2), type=int, show_default=True)
     def cmd(arg, arg2):
         pass
 
@@ -166,9 +166,9 @@ def test_multiple_default_help(runner):
 
 
 def test_multiple_default_type(runner):
-    @click.command()
-    @click.option("--arg1", multiple=True, default=("foo", "bar"))
-    @click.option("--arg2", multiple=True, default=(1, "a"))
+    @click_hotoffthehamster.command()
+    @click_hotoffthehamster.option("--arg1", multiple=True, default=("foo", "bar"))
+    @click_hotoffthehamster.option("--arg2", multiple=True, default=(1, "a"))
     def cmd(arg1, arg2):
         assert all(isinstance(e[0], text_type) for e in arg1)
         assert all(isinstance(e[1], text_type) for e in arg1)
@@ -183,8 +183,8 @@ def test_multiple_default_type(runner):
 
 
 def test_dynamic_default_help_unset(runner):
-    @click.command()
-    @click.option(
+    @click_hotoffthehamster.command()
+    @click_hotoffthehamster.option(
         "--username",
         prompt=True,
         default=lambda: os.environ.get("USER", ""),
@@ -201,8 +201,8 @@ def test_dynamic_default_help_unset(runner):
 
 
 def test_dynamic_default_help_text(runner):
-    @click.command()
-    @click.option(
+    @click_hotoffthehamster.command()
+    @click_hotoffthehamster.option(
         "--username",
         prompt=True,
         default=lambda: os.environ.get("USER", ""),
@@ -219,10 +219,10 @@ def test_dynamic_default_help_text(runner):
 
 
 def test_toupper_envvar_prefix(runner):
-    @click.command()
-    @click.option("--arg")
+    @click_hotoffthehamster.command()
+    @click_hotoffthehamster.option("--arg")
     def cmd(arg):
-        click.echo(arg)
+        click_hotoffthehamster.echo(arg)
 
     result = runner.invoke(cmd, [], auto_envvar_prefix="test", env={"TEST_ARG": "foo"})
     assert not result.exception
@@ -230,10 +230,10 @@ def test_toupper_envvar_prefix(runner):
 
 
 def test_nargs_envvar(runner):
-    @click.command()
-    @click.option("--arg", nargs=2)
+    @click_hotoffthehamster.command()
+    @click_hotoffthehamster.option("--arg", nargs=2)
     def cmd(arg):
-        click.echo("|".join(arg))
+        click_hotoffthehamster.echo("|".join(arg))
 
     result = runner.invoke(
         cmd, [], auto_envvar_prefix="TEST", env={"TEST_ARG": "foo bar"}
@@ -241,11 +241,11 @@ def test_nargs_envvar(runner):
     assert not result.exception
     assert result.output == "foo|bar\n"
 
-    @click.command()
-    @click.option("--arg", nargs=2, multiple=True)
+    @click_hotoffthehamster.command()
+    @click_hotoffthehamster.option("--arg", nargs=2, multiple=True)
     def cmd(arg):
         for item in arg:
-            click.echo("|".join(item))
+            click_hotoffthehamster.echo("|".join(item))
 
     result = runner.invoke(
         cmd, [], auto_envvar_prefix="TEST", env={"TEST_ARG": "x 1 y 2"}
@@ -255,8 +255,8 @@ def test_nargs_envvar(runner):
 
 
 def test_show_envvar(runner):
-    @click.command()
-    @click.option("--arg1", envvar="ARG1", show_envvar=True)
+    @click_hotoffthehamster.command()
+    @click_hotoffthehamster.option("--arg1", envvar="ARG1", show_envvar=True)
     def cmd(arg):
         pass
 
@@ -266,8 +266,8 @@ def test_show_envvar(runner):
 
 
 def test_show_envvar_auto_prefix(runner):
-    @click.command()
-    @click.option("--arg1", show_envvar=True)
+    @click_hotoffthehamster.command()
+    @click_hotoffthehamster.option("--arg1", show_envvar=True)
     def cmd(arg):
         pass
 
@@ -277,12 +277,12 @@ def test_show_envvar_auto_prefix(runner):
 
 
 def test_show_envvar_auto_prefix_dash_in_command(runner):
-    @click.group()
+    @click_hotoffthehamster.group()
     def cli():
         pass
 
     @cli.command()
-    @click.option("--baz", show_envvar=True)
+    @click_hotoffthehamster.option("--baz", show_envvar=True)
     def foo_bar(baz):
         pass
 
@@ -294,13 +294,13 @@ def test_show_envvar_auto_prefix_dash_in_command(runner):
 def test_custom_validation(runner):
     def validate_pos_int(ctx, param, value):
         if value < 0:
-            raise click.BadParameter("Value needs to be positive")
+            raise click_hotoffthehamster.BadParameter("Value needs to be positive")
         return value
 
-    @click.command()
-    @click.option("--foo", callback=validate_pos_int, default=1)
+    @click_hotoffthehamster.command()
+    @click_hotoffthehamster.option("--foo", callback=validate_pos_int, default=1)
     def cmd(foo):
-        click.echo(foo)
+        click_hotoffthehamster.echo(foo)
 
     result = runner.invoke(cmd, ["--foo", "-1"])
     assert "Invalid value for '--foo': Value needs to be positive" in result.output
@@ -310,10 +310,10 @@ def test_custom_validation(runner):
 
 
 def test_winstyle_options(runner):
-    @click.command()
-    @click.option("/debug;/no-debug", help="Enables or disables debug mode.")
+    @click_hotoffthehamster.command()
+    @click_hotoffthehamster.option("/debug;/no-debug", help="Enables or disables debug mode.")
     def cmd(debug):
-        click.echo(debug)
+        click_hotoffthehamster.echo(debug)
 
     result = runner.invoke(cmd, ["/debug"], help_option_names=["/?"])
     assert result.output == "True\n"
@@ -327,10 +327,10 @@ def test_winstyle_options(runner):
 
 
 def test_legacy_options(runner):
-    @click.command()
-    @click.option("-whatever")
+    @click_hotoffthehamster.command()
+    @click_hotoffthehamster.option("-whatever")
     def cmd(whatever):
-        click.echo(whatever)
+        click_hotoffthehamster.echo(whatever)
 
     result = runner.invoke(cmd, ["-whatever", "42"])
     assert result.output == "42\n"
@@ -339,19 +339,19 @@ def test_legacy_options(runner):
 
 
 def test_missing_option_string_cast():
-    ctx = click.Context(click.Command(""))
+    ctx = click_hotoffthehamster.Context(click_hotoffthehamster.Command(""))
 
-    with pytest.raises(click.MissingParameter) as excinfo:
-        click.Option(["-a"], required=True).full_process_value(ctx, None)
+    with pytest.raises(click_hotoffthehamster.MissingParameter) as excinfo:
+        click_hotoffthehamster.Option(["-a"], required=True).full_process_value(ctx, None)
 
     assert str(excinfo.value) == "missing parameter: a"
 
 
 def test_missing_choice(runner):
-    @click.command()
-    @click.option("--foo", type=click.Choice(["foo", "bar"]), required=True)
+    @click_hotoffthehamster.command()
+    @click_hotoffthehamster.option("--foo", type=click_hotoffthehamster.Choice(["foo", "bar"]), required=True)
     def cmd(foo):
-        click.echo(foo)
+        click_hotoffthehamster.echo(foo)
 
     result = runner.invoke(cmd)
     assert result.exit_code == 2
@@ -363,10 +363,10 @@ def test_missing_choice(runner):
 
 
 def test_case_insensitive_choice(runner):
-    @click.command()
-    @click.option("--foo", type=click.Choice(["Orange", "Apple"], case_sensitive=False))
+    @click_hotoffthehamster.command()
+    @click_hotoffthehamster.option("--foo", type=click_hotoffthehamster.Choice(["Orange", "Apple"], case_sensitive=False))
     def cmd(foo):
-        click.echo(foo)
+        click_hotoffthehamster.echo(foo)
 
     result = runner.invoke(cmd, ["--foo", "apple"])
     assert result.exit_code == 0
@@ -380,10 +380,10 @@ def test_case_insensitive_choice(runner):
     assert result.exit_code == 0
     assert result.output == "Apple\n"
 
-    @click.command()
-    @click.option("--foo", type=click.Choice(["Orange", "Apple"]))
+    @click_hotoffthehamster.command()
+    @click_hotoffthehamster.option("--foo", type=click_hotoffthehamster.Choice(["Orange", "Apple"]))
     def cmd2(foo):
-        click.echo(foo)
+        click_hotoffthehamster.echo(foo)
 
     result = runner.invoke(cmd2, ["--foo", "apple"])
     assert result.exit_code == 2
@@ -396,10 +396,10 @@ def test_case_insensitive_choice(runner):
 
 
 def test_case_insensitive_choice_returned_exactly(runner):
-    @click.command()
-    @click.option("--foo", type=click.Choice(["Orange", "Apple"], case_sensitive=False))
+    @click_hotoffthehamster.command()
+    @click_hotoffthehamster.option("--foo", type=click_hotoffthehamster.Choice(["Orange", "Apple"], case_sensitive=False))
     def cmd(foo):
-        click.echo(foo)
+        click_hotoffthehamster.echo(foo)
 
     result = runner.invoke(cmd, ["--foo", "apple"])
     assert result.exit_code == 0
@@ -407,11 +407,11 @@ def test_case_insensitive_choice_returned_exactly(runner):
 
 
 def test_option_help_preserve_paragraphs(runner):
-    @click.command()
-    @click.option(
+    @click_hotoffthehamster.command()
+    @click_hotoffthehamster.option(
         "-C",
         "--config",
-        type=click.Path(),
+        type=click_hotoffthehamster.Path(),
         help="""Configuration file to use.
 
         If not given, the environment variable CONFIG_FILE is consulted
@@ -433,15 +433,15 @@ def test_option_help_preserve_paragraphs(runner):
 
 
 def test_argument_custom_class(runner):
-    class CustomArgument(click.Argument):
+    class CustomArgument(click_hotoffthehamster.Argument):
         def get_default(self, ctx):
             """a dumb override of a default value for testing"""
             return "I am a default"
 
-    @click.command()
-    @click.argument("testarg", cls=CustomArgument, default="you wont see me")
+    @click_hotoffthehamster.command()
+    @click_hotoffthehamster.argument("testarg", cls=CustomArgument, default="you wont see me")
     def cmd(testarg):
-        click.echo(testarg)
+        click_hotoffthehamster.echo(testarg)
 
     result = runner.invoke(cmd)
     assert "I am a default" in result.output
@@ -449,15 +449,15 @@ def test_argument_custom_class(runner):
 
 
 def test_option_custom_class(runner):
-    class CustomOption(click.Option):
+    class CustomOption(click_hotoffthehamster.Option):
         def get_help_record(self, ctx):
             """a dumb override of a help text for testing"""
             return ("--help", "I am a help text")
 
-    @click.command()
-    @click.option("--testoption", cls=CustomOption, help="you wont see me")
+    @click_hotoffthehamster.command()
+    @click_hotoffthehamster.option("--testoption", cls=CustomOption, help="you wont see me")
     def cmd(testoption):
-        click.echo(testoption)
+        click_hotoffthehamster.echo(testoption)
 
     result = runner.invoke(cmd, ["--help"])
     assert "I am a help text" in result.output
@@ -467,23 +467,23 @@ def test_option_custom_class(runner):
 def test_option_custom_class_reusable(runner):
     """Ensure we can reuse a custom class option. See Issue #926"""
 
-    class CustomOption(click.Option):
+    class CustomOption(click_hotoffthehamster.Option):
         def get_help_record(self, ctx):
             """a dumb override of a help text for testing"""
             return ("--help", "I am a help text")
 
     # Assign to a variable to re-use the decorator.
-    testoption = click.option("--testoption", cls=CustomOption, help="you wont see me")
+    testoption = click_hotoffthehamster.option("--testoption", cls=CustomOption, help="you wont see me")
 
-    @click.command()
+    @click_hotoffthehamster.command()
     @testoption
     def cmd1(testoption):
-        click.echo(testoption)
+        click_hotoffthehamster.echo(testoption)
 
-    @click.command()
+    @click_hotoffthehamster.command()
     @testoption
     def cmd2(testoption):
-        click.echo(testoption)
+        click_hotoffthehamster.echo(testoption)
 
     # Both of the commands should have the --help option now.
     for cmd in (cmd1, cmd2):
@@ -494,8 +494,8 @@ def test_option_custom_class_reusable(runner):
 
 
 def test_bool_flag_with_type(runner):
-    @click.command()
-    @click.option("--shout/--no-shout", default=False, type=bool)
+    @click_hotoffthehamster.command()
+    @click_hotoffthehamster.option("--shout/--no-shout", default=False, type=bool)
     def cmd(shout):
         pass
 
@@ -504,10 +504,10 @@ def test_bool_flag_with_type(runner):
 
 
 def test_aliases_for_flags(runner):
-    @click.command()
-    @click.option("--warnings/--no-warnings", " /-W", default=True)
+    @click_hotoffthehamster.command()
+    @click_hotoffthehamster.option("--warnings/--no-warnings", " /-W", default=True)
     def cli(warnings):
-        click.echo(warnings)
+        click_hotoffthehamster.echo(warnings)
 
     result = runner.invoke(cli, ["--warnings"])
     assert result.output == "True\n"
@@ -516,10 +516,10 @@ def test_aliases_for_flags(runner):
     result = runner.invoke(cli, ["-W"])
     assert result.output == "False\n"
 
-    @click.command()
-    @click.option("--warnings/--no-warnings", "-w", default=True)
+    @click_hotoffthehamster.command()
+    @click_hotoffthehamster.option("--warnings/--no-warnings", "-w", default=True)
     def cli_alt(warnings):
-        click.echo(warnings)
+        click_hotoffthehamster.echo(warnings)
 
     result = runner.invoke(cli_alt, ["--warnings"])
     assert result.output == "True\n"
@@ -545,10 +545,10 @@ def test_aliases_for_flags(runner):
     ],
 )
 def test_option_names(runner, option_args, expected):
-    @click.command()
-    @click.option(*option_args, is_flag=True)
+    @click_hotoffthehamster.command()
+    @click_hotoffthehamster.option(*option_args, is_flag=True)
     def cmd(**kwargs):
-        click.echo(str(kwargs[expected]))
+        click_hotoffthehamster.echo(str(kwargs[expected]))
 
     assert cmd.params[0].name == expected
 
