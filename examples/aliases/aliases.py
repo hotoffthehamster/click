@@ -1,6 +1,6 @@
 import os
 
-import click
+import click_hotoffthehamster as click
 
 try:
     import configparser

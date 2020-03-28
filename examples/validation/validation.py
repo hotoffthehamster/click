@@ -1,4 +1,4 @@
-import click
+import click_hotoffthehamster as click
 
 try:
     from urllib import parse as urlparse

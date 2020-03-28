@@ -1,7 +1,7 @@
 import os
 import sys
 
-import click
+import click_hotoffthehamster as click
 
 
 CONTEXT_SETTINGS = dict(auto_envvar_prefix="COMPLEX")

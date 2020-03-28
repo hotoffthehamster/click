@@ -6,7 +6,7 @@ setup(
     py_modules=["termui"],
     include_package_data=True,
     install_requires=[
-        "click",
+        "click_hotoffthehamster",
         # Colorama is only required for Windows.
         "colorama",
     ],

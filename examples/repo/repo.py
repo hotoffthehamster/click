@@ -2,7 +2,7 @@ import os
 import posixpath
 import sys
 
-import click
+import click_hotoffthehamster as click
 
 
 class Repo(object):

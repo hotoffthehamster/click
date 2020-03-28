@@ -1,6 +1,6 @@
 from complex.cli import pass_environment
 
-import click
+import click_hotoffthehamster as click
 
 
 @click.command("init", short_help="Initializes a repo.")

@@ -1,4 +1,4 @@
-import click
+import click_hotoffthehamster as click
 
 
 @click.command()

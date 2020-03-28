@@ -3,7 +3,7 @@ import math
 import random
 import time
 
-import click
+import click_hotoffthehamster as click
 
 
 @click.group()
