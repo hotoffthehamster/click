@@ -180,7 +180,9 @@ def test_formatting_usage_error_metavar_missing_arg(runner):
 
 def test_formatting_usage_error_metavar_bad_arg(runner):
     @click_hotoffthehamster.command()
-    @click_hotoffthehamster.argument("arg", type=click_hotoffthehamster.INT, metavar="metavar")
+    @click_hotoffthehamster.argument(
+        "arg", type=click_hotoffthehamster.INT, metavar="metavar"
+    )
     def cmd(arg):
         pass
 
@@ -297,7 +299,9 @@ def test_truncating_docstring(runner):
 
 def test_global_show_default(runner):
     @click_hotoffthehamster.command(context_settings=dict(show_default=True))
-    @click_hotoffthehamster.option("-f", "in_file", default="out.txt", help="Output file name")
+    @click_hotoffthehamster.option(
+        "-f", "in_file", default="out.txt", help="Output file name"
+    )
     def cli():
         pass
 
@@ -313,7 +317,9 @@ def test_global_show_default(runner):
 
 def test_formatting_usage_multiline_option_padding(runner):
     @click_hotoffthehamster.command("foo")
-    @click_hotoffthehamster.option("--bar", help="This help message will be padded if it wraps.")
+    @click_hotoffthehamster.option(
+        "--bar", help="This help message will be padded if it wraps."
+    )
     def cli():
         pass
 
@@ -332,7 +338,9 @@ def test_formatting_usage_multiline_option_padding(runner):
 
 def test_formatting_usage_no_option_padding(runner):
     @click_hotoffthehamster.command("foo")
-    @click_hotoffthehamster.option("--bar", help="This help message will be padded if it wraps.")
+    @click_hotoffthehamster.option(
+        "--bar", help="This help message will be padded if it wraps."
+    )
     def cli():
         pass
 

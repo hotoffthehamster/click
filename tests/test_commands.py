@@ -214,7 +214,9 @@ def test_object_propagation(runner):
         @cli.command()
         @click_hotoffthehamster.pass_context
         def sync(ctx):
-            click_hotoffthehamster.echo("Debug is {}".format("on" if ctx.obj["DEBUG"] else "off"))
+            click_hotoffthehamster.echo(
+                "Debug is {}".format("on" if ctx.obj["DEBUG"] else "off")
+            )
 
         result = runner.invoke(cli, ["sync"])
         assert result.exception is None
@@ -264,7 +266,9 @@ def test_invoked_subcommand(runner):
 
 def test_unprocessed_options(runner):
     @click_hotoffthehamster.command(context_settings=dict(ignore_unknown_options=True))
-    @click_hotoffthehamster.argument("args", nargs=-1, type=click_hotoffthehamster.UNPROCESSED)
+    @click_hotoffthehamster.argument(
+        "args", nargs=-1, type=click_hotoffthehamster.UNPROCESSED
+    )
     @click_hotoffthehamster.option("--verbose", "-v", count=True)
     def cli(verbose, args):
         click_hotoffthehamster.echo("Verbosity: {}".format(verbose))

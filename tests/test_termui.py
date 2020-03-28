@@ -216,7 +216,9 @@ def test_progressbar_is_iterator(runner, monkeypatch):
 def test_choices_list_in_prompt(runner, monkeypatch):
     @click_hotoffthehamster.command()
     @click_hotoffthehamster.option(
-        "-g", type=click_hotoffthehamster.Choice(["none", "day", "week", "month"]), prompt=True
+        "-g",
+        type=click_hotoffthehamster.Choice(["none", "day", "week", "month"]),
+        prompt=True,
     )
     def cli_with_choices(g):
         pass
@@ -243,7 +245,12 @@ def test_choices_list_in_prompt(runner, monkeypatch):
 )
 def test_file_prompt_default_format(runner, file_kwargs):
     @click_hotoffthehamster.command()
-    @click_hotoffthehamster.option("-f", default=__file__, prompt="file", type=click_hotoffthehamster.File(**file_kwargs))
+    @click_hotoffthehamster.option(
+        "-f",
+        default=__file__,
+        prompt="file",
+        type=click_hotoffthehamster.File(**file_kwargs),
+    )
     def cli(f):
         click_hotoffthehamster.echo(f.name)
 
@@ -337,8 +344,12 @@ def test_progressbar_update_with_item_show_func(runner, monkeypatch):
 @pytest.mark.parametrize("echo", [True, False])
 @pytest.mark.skipif(not WIN, reason="Tests user-input using the msvcrt module.")
 def test_getchar_windows(runner, monkeypatch, key_char, echo):
-    monkeypatch.setattr(click_hotoffthehamster._termui_impl.msvcrt, "getwche", lambda: key_char)
-    monkeypatch.setattr(click_hotoffthehamster._termui_impl.msvcrt, "getwch", lambda: key_char)
+    monkeypatch.setattr(
+        click_hotoffthehamster._termui_impl.msvcrt, "getwche", lambda: key_char
+    )
+    monkeypatch.setattr(
+        click_hotoffthehamster._termui_impl.msvcrt, "getwch", lambda: key_char
+    )
     monkeypatch.setattr(click_hotoffthehamster.termui, "_getchar", None)
     assert click_hotoffthehamster.getchar(echo) == key_char
 
@@ -352,7 +363,9 @@ def test_getchar_windows(runner, monkeypatch, key_char, echo):
 def test_getchar_special_key_windows(runner, monkeypatch, special_key_char, key_char):
     ordered_inputs = [key_char, special_key_char]
     monkeypatch.setattr(
-        click_hotoffthehamster._termui_impl.msvcrt, "getwch", lambda: ordered_inputs.pop()
+        click_hotoffthehamster._termui_impl.msvcrt,
+        "getwch",
+        lambda: ordered_inputs.pop(),
     )
     monkeypatch.setattr(click_hotoffthehamster.termui, "_getchar", None)
     assert click_hotoffthehamster.getchar() == special_key_char + key_char
@@ -363,7 +376,9 @@ def test_getchar_special_key_windows(runner, monkeypatch, special_key_char, key_
 )
 @pytest.mark.skipif(not WIN, reason="Tests user-input using the msvcrt module.")
 def test_getchar_windows_exceptions(runner, monkeypatch, key_char, exc):
-    monkeypatch.setattr(click_hotoffthehamster._termui_impl.msvcrt, "getwch", lambda: key_char)
+    monkeypatch.setattr(
+        click_hotoffthehamster._termui_impl.msvcrt, "getwch", lambda: key_char
+    )
     monkeypatch.setattr(click_hotoffthehamster.termui, "_getchar", None)
 
     with pytest.raises(exc):

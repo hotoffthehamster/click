@@ -128,7 +128,9 @@ def test_file_args(runner):
 
 def test_path_args(runner):
     @click_hotoffthehamster.command()
-    @click_hotoffthehamster.argument("input", type=click_hotoffthehamster.Path(dir_okay=False, allow_dash=True))
+    @click_hotoffthehamster.argument(
+        "input", type=click_hotoffthehamster.Path(dir_okay=False, allow_dash=True)
+    )
     def foo(input):
         click_hotoffthehamster.echo(input)
 
@@ -139,7 +141,9 @@ def test_path_args(runner):
 
 def test_file_atomics(runner):
     @click_hotoffthehamster.command()
-    @click_hotoffthehamster.argument("output", type=click_hotoffthehamster.File("wb", atomic=True))
+    @click_hotoffthehamster.argument(
+        "output", type=click_hotoffthehamster.File("wb", atomic=True)
+    )
     def inout(output):
         output.write(b"Foo bar baz\n")
         output.flush()
@@ -159,7 +163,9 @@ def test_file_atomics(runner):
 
 def test_stdout_default(runner):
     @click_hotoffthehamster.command()
-    @click_hotoffthehamster.argument("output", type=click_hotoffthehamster.File("w"), default="-")
+    @click_hotoffthehamster.argument(
+        "output", type=click_hotoffthehamster.File("w"), default="-"
+    )
     def inout(output):
         output.write("Foo bar baz\n")
         output.flush()
@@ -226,7 +232,9 @@ def test_missing_argument_string_cast():
     ctx = click_hotoffthehamster.Context(click_hotoffthehamster.Command(""))
 
     with pytest.raises(click_hotoffthehamster.MissingParameter) as excinfo:
-        click_hotoffthehamster.Argument(["a"], required=True).full_process_value(ctx, None)
+        click_hotoffthehamster.Argument(["a"], required=True).full_process_value(
+            ctx, None
+        )
 
     assert str(excinfo.value) == "missing parameter: a"
 

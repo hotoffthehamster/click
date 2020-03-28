@@ -131,7 +131,9 @@ def test_with_color():
     assert not result.exception
 
     result = runner.invoke(cli, color=True)
-    assert result.output == "{}\n".format(click_hotoffthehamster.style("hello world", fg="blue"))
+    assert result.output == "{}\n".format(
+        click_hotoffthehamster.style("hello world", fg="blue")
+    )
     assert not result.exception
 
 

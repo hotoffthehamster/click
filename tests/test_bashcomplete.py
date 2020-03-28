@@ -109,8 +109,12 @@ def test_long_chain():
     CSUB_CHOICES = ["bar", "baz"]
 
     @bsub.command("csub")
-    @click_hotoffthehamster.option("--csub-opt", type=click_hotoffthehamster.Choice(CSUB_OPT_CHOICES))
-    @click_hotoffthehamster.option("--csub", type=click_hotoffthehamster.Choice(CSUB_CHOICES))
+    @click_hotoffthehamster.option(
+        "--csub-opt", type=click_hotoffthehamster.Choice(CSUB_OPT_CHOICES)
+    )
+    @click_hotoffthehamster.option(
+        "--csub", type=click_hotoffthehamster.Choice(CSUB_CHOICES)
+    )
     @click_hotoffthehamster.option("--search-color", autocompletion=search_colors)
     @click_hotoffthehamster.argument("color", autocompletion=get_colors)
     def csub(csub_opt, color):
@@ -152,7 +156,9 @@ def test_long_chain():
 def test_chaining():
     @click_hotoffthehamster.group("cli", chain=True)
     @click_hotoffthehamster.option("--cli-opt")
-    @click_hotoffthehamster.argument("arg", type=click_hotoffthehamster.Choice(["cliarg1", "cliarg2"]))
+    @click_hotoffthehamster.argument(
+        "arg", type=click_hotoffthehamster.Choice(["cliarg1", "cliarg2"])
+    )
     def cli(cli_opt, arg):
         pass
 
@@ -163,13 +169,17 @@ def test_chaining():
 
     @cli.command(help="bsub help")
     @click_hotoffthehamster.option("--bsub-opt")
-    @click_hotoffthehamster.argument("arg", type=click_hotoffthehamster.Choice(["arg1", "arg2"]))
+    @click_hotoffthehamster.argument(
+        "arg", type=click_hotoffthehamster.Choice(["arg1", "arg2"])
+    )
     def bsub(bsub_opt, arg):
         pass
 
     @cli.command()
     @click_hotoffthehamster.option("--csub-opt")
-    @click_hotoffthehamster.argument("arg", type=click_hotoffthehamster.Choice(["carg1", "carg2"]), default="carg1")
+    @click_hotoffthehamster.argument(
+        "arg", type=click_hotoffthehamster.Choice(["carg1", "carg2"]), default="carg1"
+    )
     def csub(csub_opt, arg):
         pass
 
@@ -197,9 +207,15 @@ def test_chaining():
 
 def test_argument_choice():
     @click_hotoffthehamster.command()
-    @click_hotoffthehamster.argument("arg1", required=True, type=click_hotoffthehamster.Choice(["arg11", "arg12"]))
-    @click_hotoffthehamster.argument("arg2", type=click_hotoffthehamster.Choice(["arg21", "arg22"]), default="arg21")
-    @click_hotoffthehamster.argument("arg3", type=click_hotoffthehamster.Choice(["arg", "argument"]), default="arg")
+    @click_hotoffthehamster.argument(
+        "arg1", required=True, type=click_hotoffthehamster.Choice(["arg11", "arg12"])
+    )
+    @click_hotoffthehamster.argument(
+        "arg2", type=click_hotoffthehamster.Choice(["arg21", "arg22"]), default="arg21"
+    )
+    @click_hotoffthehamster.argument(
+        "arg3", type=click_hotoffthehamster.Choice(["arg", "argument"]), default="arg"
+    )
     def cli():
         pass
 
@@ -212,9 +228,19 @@ def test_argument_choice():
 
 def test_option_choice():
     @click_hotoffthehamster.command()
-    @click_hotoffthehamster.option("--opt1", type=click_hotoffthehamster.Choice(["opt11", "opt12"]), help="opt1 help")
-    @click_hotoffthehamster.option("--opt2", type=click_hotoffthehamster.Choice(["opt21", "opt22"]), default="opt21")
-    @click_hotoffthehamster.option("--opt3", type=click_hotoffthehamster.Choice(["opt", "option"]))
+    @click_hotoffthehamster.option(
+        "--opt1",
+        type=click_hotoffthehamster.Choice(["opt11", "opt12"]),
+        help="opt1 help",
+    )
+    @click_hotoffthehamster.option(
+        "--opt2",
+        type=click_hotoffthehamster.Choice(["opt21", "opt22"]),
+        default="opt21",
+    )
+    @click_hotoffthehamster.option(
+        "--opt3", type=click_hotoffthehamster.Choice(["opt", "option"])
+    )
     def cli():
         pass
 
@@ -247,9 +273,15 @@ def test_option_choice():
 
 def test_option_and_arg_choice():
     @click_hotoffthehamster.command()
-    @click_hotoffthehamster.option("--opt1", type=click_hotoffthehamster.Choice(["opt11", "opt12"]))
-    @click_hotoffthehamster.argument("arg1", required=False, type=click_hotoffthehamster.Choice(["arg11", "arg12"]))
-    @click_hotoffthehamster.option("--opt2", type=click_hotoffthehamster.Choice(["opt21", "opt22"]))
+    @click_hotoffthehamster.option(
+        "--opt1", type=click_hotoffthehamster.Choice(["opt11", "opt12"])
+    )
+    @click_hotoffthehamster.argument(
+        "arg1", required=False, type=click_hotoffthehamster.Choice(["arg11", "arg12"])
+    )
+    @click_hotoffthehamster.option(
+        "--opt2", type=click_hotoffthehamster.Choice(["opt21", "opt22"])
+    )
     def cli():
         pass
 
@@ -264,7 +296,9 @@ def test_option_and_arg_choice():
 def test_boolean_flag_choice():
     @click_hotoffthehamster.command()
     @click_hotoffthehamster.option("--shout/--no-shout", default=False)
-    @click_hotoffthehamster.argument("arg", required=False, type=click_hotoffthehamster.Choice(["arg1", "arg2"]))
+    @click_hotoffthehamster.argument(
+        "arg", required=False, type=click_hotoffthehamster.Choice(["arg1", "arg2"])
+    )
     def cli(local_opt):
         pass
 
@@ -274,8 +308,12 @@ def test_boolean_flag_choice():
 
 def test_multi_value_option_choice():
     @click_hotoffthehamster.command()
-    @click_hotoffthehamster.option("--pos", nargs=2, type=click_hotoffthehamster.Choice(["pos1", "pos2"]))
-    @click_hotoffthehamster.argument("arg", required=False, type=click_hotoffthehamster.Choice(["arg1", "arg2"]))
+    @click_hotoffthehamster.option(
+        "--pos", nargs=2, type=click_hotoffthehamster.Choice(["pos1", "pos2"])
+    )
+    @click_hotoffthehamster.argument(
+        "arg", required=False, type=click_hotoffthehamster.Choice(["arg1", "arg2"])
+    )
     def cli(local_opt):
         pass
 
@@ -287,8 +325,15 @@ def test_multi_value_option_choice():
 
 def test_multi_option_choice():
     @click_hotoffthehamster.command()
-    @click_hotoffthehamster.option("--message", "-m", multiple=True, type=click_hotoffthehamster.Choice(["m1", "m2"]))
-    @click_hotoffthehamster.argument("arg", required=False, type=click_hotoffthehamster.Choice(["arg1", "arg2"]))
+    @click_hotoffthehamster.option(
+        "--message",
+        "-m",
+        multiple=True,
+        type=click_hotoffthehamster.Choice(["m1", "m2"]),
+    )
+    @click_hotoffthehamster.argument(
+        "arg", required=False, type=click_hotoffthehamster.Choice(["arg1", "arg2"])
+    )
     def cli(local_opt):
         pass
 
@@ -299,8 +344,12 @@ def test_multi_option_choice():
 
 def test_variadic_argument_choice():
     @click_hotoffthehamster.command()
-    @click_hotoffthehamster.option("--opt", type=click_hotoffthehamster.Choice(["opt1", "opt2"]))
-    @click_hotoffthehamster.argument("src", nargs=-1, type=click_hotoffthehamster.Choice(["src1", "src2"]))
+    @click_hotoffthehamster.option(
+        "--opt", type=click_hotoffthehamster.Choice(["opt1", "opt2"])
+    )
+    @click_hotoffthehamster.argument(
+        "src", nargs=-1, type=click_hotoffthehamster.Choice(["src1", "src2"])
+    )
     def cli(local_opt):
         pass
 
@@ -344,20 +393,30 @@ def test_long_chain_choice():
         pass
 
     @cli.group()
-    @click_hotoffthehamster.option("--sub-opt", type=click_hotoffthehamster.Choice(["subopt1", "subopt2"]))
+    @click_hotoffthehamster.option(
+        "--sub-opt", type=click_hotoffthehamster.Choice(["subopt1", "subopt2"])
+    )
     @click_hotoffthehamster.argument(
-        "sub-arg", required=False, type=click_hotoffthehamster.Choice(["subarg1", "subarg2"])
+        "sub-arg",
+        required=False,
+        type=click_hotoffthehamster.Choice(["subarg1", "subarg2"]),
     )
     def sub(sub_opt, sub_arg):
         pass
 
     @sub.command(short_help="bsub help")
-    @click_hotoffthehamster.option("--bsub-opt", type=click_hotoffthehamster.Choice(["bsubopt1", "bsubopt2"]))
-    @click_hotoffthehamster.argument(
-        "bsub-arg1", required=False, type=click_hotoffthehamster.Choice(["bsubarg1", "bsubarg2"])
+    @click_hotoffthehamster.option(
+        "--bsub-opt", type=click_hotoffthehamster.Choice(["bsubopt1", "bsubopt2"])
     )
     @click_hotoffthehamster.argument(
-        "bbsub-arg2", required=False, type=click_hotoffthehamster.Choice(["bbsubarg1", "bbsubarg2"])
+        "bsub-arg1",
+        required=False,
+        type=click_hotoffthehamster.Choice(["bsubarg1", "bsubarg2"]),
+    )
+    @click_hotoffthehamster.argument(
+        "bbsub-arg2",
+        required=False,
+        type=click_hotoffthehamster.Choice(["bbsubarg1", "bbsubarg2"]),
     )
     def bsub(bsub_opt):
         pass
@@ -442,7 +501,9 @@ def test_chained_multi():
 def test_hidden():
     @click_hotoffthehamster.group()
     @click_hotoffthehamster.option("--name", hidden=True)
-    @click_hotoffthehamster.option("--choices", type=click_hotoffthehamster.Choice([1, 2]), hidden=True)
+    @click_hotoffthehamster.option(
+        "--choices", type=click_hotoffthehamster.Choice([1, 2]), hidden=True
+    )
     def cli(name):
         pass
 

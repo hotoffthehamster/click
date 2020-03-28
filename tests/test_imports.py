@@ -67,6 +67,8 @@ def test_light_imports():
     imported = json.loads(rv)
 
     for module in imported:
-        if module == "click_hotoffthehamster" or module.startswith("click_hotoffthehamster."):
+        if module == "click_hotoffthehamster" or module.startswith(
+            "click_hotoffthehamster."
+        ):
             continue
         assert module in ALLOWED_IMPORTS

@@ -56,7 +56,9 @@ def test_nargs_tup_composite_mult(runner):
 
 def test_counting(runner):
     @click_hotoffthehamster.command()
-    @click_hotoffthehamster.option("-v", count=True, help="Verbosity", type=click_hotoffthehamster.IntRange(0, 3))
+    @click_hotoffthehamster.option(
+        "-v", count=True, help="Verbosity", type=click_hotoffthehamster.IntRange(0, 3)
+    )
     def cli(v):
         click_hotoffthehamster.echo("verbosity={:d}".format(v))
 
@@ -107,7 +109,9 @@ def test_multiple_required(runner):
 
 def test_empty_envvar(runner):
     @click_hotoffthehamster.command()
-    @click_hotoffthehamster.option("--mypath", type=click_hotoffthehamster.Path(exists=True), envvar="MYPATH")
+    @click_hotoffthehamster.option(
+        "--mypath", type=click_hotoffthehamster.Path(exists=True), envvar="MYPATH"
+    )
     def cli(mypath):
         click_hotoffthehamster.echo("mypath: {}".format(mypath))
 
@@ -138,7 +142,9 @@ def test_multiple_envvar(runner):
     assert result.output == "foo|bar|baz\n"
 
     @click_hotoffthehamster.command()
-    @click_hotoffthehamster.option("--arg", multiple=True, type=click_hotoffthehamster.Path())
+    @click_hotoffthehamster.option(
+        "--arg", multiple=True, type=click_hotoffthehamster.Path()
+    )
     def cmd(arg):
         click_hotoffthehamster.echo("|".join(arg))
 
@@ -154,8 +160,12 @@ def test_multiple_envvar(runner):
 
 def test_multiple_default_help(runner):
     @click_hotoffthehamster.command()
-    @click_hotoffthehamster.option("--arg1", multiple=True, default=("foo", "bar"), show_default=True)
-    @click_hotoffthehamster.option("--arg2", multiple=True, default=(1, 2), type=int, show_default=True)
+    @click_hotoffthehamster.option(
+        "--arg1", multiple=True, default=("foo", "bar"), show_default=True
+    )
+    @click_hotoffthehamster.option(
+        "--arg2", multiple=True, default=(1, 2), type=int, show_default=True
+    )
     def cmd(arg, arg2):
         pass
 
@@ -311,7 +321,9 @@ def test_custom_validation(runner):
 
 def test_winstyle_options(runner):
     @click_hotoffthehamster.command()
-    @click_hotoffthehamster.option("/debug;/no-debug", help="Enables or disables debug mode.")
+    @click_hotoffthehamster.option(
+        "/debug;/no-debug", help="Enables or disables debug mode."
+    )
     def cmd(debug):
         click_hotoffthehamster.echo(debug)
 
@@ -342,14 +354,18 @@ def test_missing_option_string_cast():
     ctx = click_hotoffthehamster.Context(click_hotoffthehamster.Command(""))
 
     with pytest.raises(click_hotoffthehamster.MissingParameter) as excinfo:
-        click_hotoffthehamster.Option(["-a"], required=True).full_process_value(ctx, None)
+        click_hotoffthehamster.Option(["-a"], required=True).full_process_value(
+            ctx, None
+        )
 
     assert str(excinfo.value) == "missing parameter: a"
 
 
 def test_missing_choice(runner):
     @click_hotoffthehamster.command()
-    @click_hotoffthehamster.option("--foo", type=click_hotoffthehamster.Choice(["foo", "bar"]), required=True)
+    @click_hotoffthehamster.option(
+        "--foo", type=click_hotoffthehamster.Choice(["foo", "bar"]), required=True
+    )
     def cmd(foo):
         click_hotoffthehamster.echo(foo)
 
@@ -364,7 +380,10 @@ def test_missing_choice(runner):
 
 def test_case_insensitive_choice(runner):
     @click_hotoffthehamster.command()
-    @click_hotoffthehamster.option("--foo", type=click_hotoffthehamster.Choice(["Orange", "Apple"], case_sensitive=False))
+    @click_hotoffthehamster.option(
+        "--foo",
+        type=click_hotoffthehamster.Choice(["Orange", "Apple"], case_sensitive=False),
+    )
     def cmd(foo):
         click_hotoffthehamster.echo(foo)
 
@@ -381,7 +400,9 @@ def test_case_insensitive_choice(runner):
     assert result.output == "Apple\n"
 
     @click_hotoffthehamster.command()
-    @click_hotoffthehamster.option("--foo", type=click_hotoffthehamster.Choice(["Orange", "Apple"]))
+    @click_hotoffthehamster.option(
+        "--foo", type=click_hotoffthehamster.Choice(["Orange", "Apple"])
+    )
     def cmd2(foo):
         click_hotoffthehamster.echo(foo)
 
@@ -397,7 +418,10 @@ def test_case_insensitive_choice(runner):
 
 def test_case_insensitive_choice_returned_exactly(runner):
     @click_hotoffthehamster.command()
-    @click_hotoffthehamster.option("--foo", type=click_hotoffthehamster.Choice(["Orange", "Apple"], case_sensitive=False))
+    @click_hotoffthehamster.option(
+        "--foo",
+        type=click_hotoffthehamster.Choice(["Orange", "Apple"], case_sensitive=False),
+    )
     def cmd(foo):
         click_hotoffthehamster.echo(foo)
 
@@ -439,7 +463,9 @@ def test_argument_custom_class(runner):
             return "I am a default"
 
     @click_hotoffthehamster.command()
-    @click_hotoffthehamster.argument("testarg", cls=CustomArgument, default="you wont see me")
+    @click_hotoffthehamster.argument(
+        "testarg", cls=CustomArgument, default="you wont see me"
+    )
     def cmd(testarg):
         click_hotoffthehamster.echo(testarg)
 
@@ -455,7 +481,9 @@ def test_option_custom_class(runner):
             return ("--help", "I am a help text")
 
     @click_hotoffthehamster.command()
-    @click_hotoffthehamster.option("--testoption", cls=CustomOption, help="you wont see me")
+    @click_hotoffthehamster.option(
+        "--testoption", cls=CustomOption, help="you wont see me"
+    )
     def cmd(testoption):
         click_hotoffthehamster.echo(testoption)
 
@@ -473,7 +501,9 @@ def test_option_custom_class_reusable(runner):
             return ("--help", "I am a help text")
 
     # Assign to a variable to re-use the decorator.
-    testoption = click_hotoffthehamster.option("--testoption", cls=CustomOption, help="you wont see me")
+    testoption = click_hotoffthehamster.option(
+        "--testoption", cls=CustomOption, help="you wont see me"
+    )
 
     @click_hotoffthehamster.command()
     @testoption

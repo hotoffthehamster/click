@@ -18,7 +18,9 @@ def test_option_normalization(runner):
 
 def test_choice_normalization(runner):
     @click_hotoffthehamster.command(context_settings=CONTEXT_SETTINGS)
-    @click_hotoffthehamster.option("--choice", type=click_hotoffthehamster.Choice(["Foo", "Bar"]))
+    @click_hotoffthehamster.option(
+        "--choice", type=click_hotoffthehamster.Choice(["Foo", "Bar"])
+    )
     def cli(choice):
         click_hotoffthehamster.echo(choice)
 

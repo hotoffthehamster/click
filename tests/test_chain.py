@@ -8,7 +8,8 @@ import click_hotoffthehamster
 def debug():
     click_hotoffthehamster.echo(
         "{}={}".format(
-            sys._getframe(1).f_code.co_name, "|".join(click_hotoffthehamster.get_current_context().args)
+            sys._getframe(1).f_code.co_name,
+            "|".join(click_hotoffthehamster.get_current_context().args),
         )
     )
 
@@ -111,7 +112,9 @@ def test_chaining_with_arguments(runner):
 
 def test_pipeline(runner):
     @click_hotoffthehamster.group(chain=True, invoke_without_command=True)
-    @click_hotoffthehamster.option("-i", "--input", type=click_hotoffthehamster.File("r"))
+    @click_hotoffthehamster.option(
+        "-i", "--input", type=click_hotoffthehamster.File("r")
+    )
     def cli(input):
         pass
 
