@@ -8,8 +8,13 @@ class TextWrapper(textwrap.TextWrapper):
 
         if self.break_long_words:
             last = reversed_chunks[-1]
-            cut = last[:space_left]
-            res = last[space_left:]
+            try:
+                # Split [long|option|lists] on pipe (or any piped|word).
+                split_idx = last.rindex("|", 0, space_left) + 1
+            except ValueError:
+                split_idx = space_left
+            cut = last[:split_idx]
+            res = last[split_idx:]
             cur_line.append(cut)
             reversed_chunks[-1] = res
         elif not cur_line:
