@@ -331,7 +331,8 @@ def test_formatting_usage_multiline_option_padding(runner):
         "Options:",
         "  --bar TEXT  This help message will be",
         "              padded if it wraps.",
-        "",
+        # (lb): Removed blank line separators:
+        #  "",
         "  --help      Show this message and exit.",
     ]
 
