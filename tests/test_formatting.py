@@ -310,8 +310,8 @@ def test_global_show_default(runner):
         "Usage: cli [OPTIONS]",
         "",
         "Options:",
-        "  -f TEXT  Output file name  [default: out.txt]",
-        "  --help   Show this message and exit.  [default: False]",
+        "  -f TEXT  Output file name [default: out.txt]",
+        "  --help   Show this message and exit [default: False].",
     ]
 
 

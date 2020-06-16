@@ -2020,9 +2020,14 @@ class Option(Parameter):
         if self.required:
             extra.append("required")
         if extra:
-            help = "{}[{}]".format(
-                "{}  ".format(help) if help else "", "; ".join(extra)
-            )
+            if help and help.endswith("."):
+                # (lb): Space is precious, so prefer one space before bracket, not
+                # two; and honor proper sentences, sneaking extra before final period.
+                help = "{} [{}].".format(help[:-1], "; ".join(extra))
+            else:
+                help = "{}[{}]".format(
+                    "{} ".format(help) if help else "", "; ".join(extra)
+                )
 
         return ("; " if any_prefix_is_slash else " / ").join(rv), help
 
